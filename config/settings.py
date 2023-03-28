@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    'questionbox',
-
     'rest_framework',
+    'djoser',
+    'questionbox',
 ]
 
 MIDDLEWARE = [
