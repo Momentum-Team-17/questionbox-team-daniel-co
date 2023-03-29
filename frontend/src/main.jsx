@@ -1,12 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import { createBrowserRouter, createRoutesFromElements, RouterProvider } from "react-router-dom"
+import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route } from "react-router-dom"
 import HomePage from './routes/home'
 import LoginPage from './routes/login'
 import SignUpPage from './routes/signup'
 import UserPage from './routes/user'
 import Header from './components/header'
+import QuestionPage from './routes/question'
 
 
 const router = createBrowserRouter(
