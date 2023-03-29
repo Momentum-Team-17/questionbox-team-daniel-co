@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # exit on error
 set -o errexit
-cd backend
+
 pipenv install
 
 pipenv run python manage.py migrate
