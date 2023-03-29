@@ -11,4 +11,5 @@ class QuestionSerializer(serializers.ModelSerializer):
             'text',
             'author',
             'time_created',
+            'accepted_answer',
         )
