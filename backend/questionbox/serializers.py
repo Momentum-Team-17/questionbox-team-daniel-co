@@ -11,5 +11,17 @@ class QuestionSerializer(serializers.ModelSerializer):
             'text',
             'author',
             'time_created',
-            'accepted_answer',
+        )
+
+
+class AnswerSerializer(serializers.ModelSerializer):
+    # question = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Answer
+        fields = (
+            'question',
+            'text',
+            'author',
+            'time_created',
         )
