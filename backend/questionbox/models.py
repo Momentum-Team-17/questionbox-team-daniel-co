@@ -39,4 +39,5 @@ class StarTracker(models.Model):
     answer = models.ForeignKey(to='Answer', on_delete=models.CASCADE)
 
     class Meta:
-        models.UniqueConstraint(fields=['user', 'question', 'answer'])
+        models.UniqueConstraint(
+            fields=['user', 'question', 'answer'], name='tracker_constraint')
