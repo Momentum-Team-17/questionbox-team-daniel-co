@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from rest_framework import generics, filters
-from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .models import User, Question, Answer, StarTracker
 from .serializers import QuestionSerializer, AnswerSerializer
