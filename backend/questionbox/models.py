@@ -3,8 +3,10 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    fav_questions = models.ManyToManyField(to='Question', related_name='users')
-    fav_answers = models.ManyToManyField(to='Answer', related_name='users')
+    fav_questions = models.ManyToManyField(
+        to='Question', related_name='users', blank=True, null=True)
+    fav_answers = models.ManyToManyField(
+        to='Answer', related_name='users', blank=True, null=True)
 
 
 class Question(models.Model):
@@ -21,7 +23,8 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    question = models.ForeignKey(to='Question', on_delete=models.CASCADE)
+    question = models.ForeignKey(
+        to='Question', on_delete=models.CASCADE, related_name='answers')
     text = models.TextField(max_length=5000)
     author = models.ForeignKey(to='User', on_delete=models.CASCADE)
     time_created = models.DateTimeField(auto_now_add=True)
