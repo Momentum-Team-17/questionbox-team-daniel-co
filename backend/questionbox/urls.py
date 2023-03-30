@@ -4,5 +4,5 @@ from questionbox import views
 
 urlpatterns = [
     path('', views.QuestionList.as_view()),
-    path('<int:pk>/answer', views.CreateAnswer.as_view()),
+    path('questions/<int:pk>/answers', views.CreateAnswer.as_view()),
 ]
