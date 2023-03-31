@@ -37,9 +37,18 @@ export default function App() {
     if (homeData) {
       return homeData.filter((q) => q.pk === pk)
     } else {
-      //AXIOS CALL
+      axios.get(`${URL}/question/${pk}`)
+        .then((response) => {
+          return response.data
+        })
     }
+  }
 
+  loadUser = (username) => {
+    axios.get(`${URL}/user/${username}`)
+      .then((response) => {
+        return response.data
+      })
   }
 
   const router = createBrowserRouter(  
@@ -47,7 +56,7 @@ export default function App() {
         <>
           <Route element={<Header token={token} username={ username } />}>
             <Route element={<HomePage token={token} />} path="/" loader={ loadHome } />
-            <Route element={<QuestionPage token={token} loader={(pk) => loadUser({ pk })} />} path="/question/:pk" /> //save yourself the API call and just filter to the pk of the main call as long as you have one ?? I think that makes sense
+            <Route element={<QuestionPage token={token} loader={(pk) => loadQuestion({ pk })} />} path="/question/:pk" /> //save yourself the API call and just filter to the pk of the main call as long as you have one ?? I think that makes sense
             <Route element={<UserPage token={token} username={username} loader={ (username) => loadUser({username})} />} path="/user/:username" />
             <Route element={<LoginPage setAuth={ setAuth } />} path = "/login" />
             <Route element={<SignUpPage />} path="/sign-up" />
