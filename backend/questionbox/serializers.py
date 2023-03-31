@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.settings import api_settings
+from django.core.paginator import Paginator
 from .models import User, Question, Answer, StarTracker
 
 
@@ -20,7 +22,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    answers = AnswerSerializer(many=True, read_only=True)
+    answers = serializers.SerializerMethodField('paginated_answers')
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username')
 
@@ -36,3 +38,10 @@ class QuestionSerializer(serializers.ModelSerializer):
         )
 
         read_only_fields = ('author',)
+
+    def paginated_answers(self, obj):
+        page_size = 2
+        paginator = Paginator(obj.answers.all(), page_size)
+        answers = paginator.page(1)
+        serializer = AnswerSerializer(answers, many=True)
+        return serializer.data
