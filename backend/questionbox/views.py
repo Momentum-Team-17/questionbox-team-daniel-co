@@ -28,3 +28,8 @@ class CreateAnswer(generics.CreateAPIView):
     def perform_create(self, serializer):
         question = get_object_or_404(Question, pk=self.kwargs["pk"])
         serializer.save(author=self.request.user, question=question)
+
+
+class QuestionDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
