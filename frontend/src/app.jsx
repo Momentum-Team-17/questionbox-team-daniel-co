@@ -9,28 +9,48 @@ import UserPage from './routes/user'
 import Header from './components/header'
 import QuestionPage from './routes/question'
 import useLocalStorageState from 'use-local-storage-state'
-
+import axios from 'axios'
 
 
 
 export default function App() {
   const [token, setToken] = useLocalStorageState('token')
-  const [userName, setUserName] = useState()
+  const [username, setUserName] = useState()
+  const [homeData, setHomeData] = useState()
 
-  const setAuth = (token, userName) => {
+  const URL = 'https://questionbox-mgxz.onrender.com/'
+
+  const setAuth = (token, username) => {
     setToken(token);
-    setUserName(userName);
+    setUserName(username);
+  }
+
+  loadHome = () => {
+    axios.get(URL)
+      .then((response) => {
+        setHomeData(response.data)
+        return response.data
+      })
+  }
+
+  loadQuestion = (pk) => {
+    if (homeData) {
+      return homeData.filter((q) => q.pk === pk)
+    } else {
+      //AXIOS CALL
+    }
+
   }
 
   const router = createBrowserRouter(  
       createRoutesFromElements(
         <>
-          <Route element={<Header token={token} />}>
-            <Route element={<HomePage token={token} />} path="/" loader={ () => true } />
+          <Route element={<Header token={token} username={ username } />}>
+            <Route element={<HomePage token={token} />} path="/" loader={ loadHome } />
+            <Route element={<QuestionPage token={token} loader={(pk) => loadUser({ pk })} />} path="/question/:pk" /> //save yourself the API call and just filter to the pk of the main call as long as you have one ?? I think that makes sense
+            <Route element={<UserPage token={token} username={username} loader={ (username) => loadUser({username})} />} path="/user/:username" />
             <Route element={<LoginPage setAuth={ setAuth } />} path = "/login" />
             <Route element={<SignUpPage />} path="/sign-up" />
-            <Route element={<QuestionPage token={token} />} path="/question/:pk" />
-            <Route element={<UserPage token={token} />} path="/user/:username" />
           </Route>
         </>
       )
