@@ -1,28 +1,36 @@
 import { useState } from "react"
-import { faUser } from "@fortawesome/free-solid-svg-icons"
+import { faUser, faLock } from "@fortawesome/free-solid-svg-icons"
 
 
+class Input {
+  constructor(label, type, onChange, icon){
+        this.label = label
+        this.type = type
+        this.onChange = onChange
+        this.icon = icon
+  }
+}
 
 export default function LoginPage(props) {
   const [userName, setUserName] = useState()
   const [password, setPassword] = useState()
 
+  const onSubmit = () => {
+    
+  }
+
   const fields = {
-    inputs: [
-      {
-        label: "Username",
-        type: "text",
-        onChange: setUserName,
-        icon: { faUser },
-      }
-    ]
+    title: "Login",
+    inputs: [new Input("Username", "text", setUserName, { faUser }),
+      new Input("Password", "password", setPassword, { faLock })],
+    onSubmit: onSubmit
   }
   return (
-    <LSCard />
+    <LSCard fields={fields} />
   )
 }
 
 
-function LSCard(props) {
+function LSCard({fields}) {
   
 }
