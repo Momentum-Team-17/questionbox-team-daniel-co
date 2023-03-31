@@ -33,3 +33,9 @@ class CreateAnswer(generics.CreateAPIView):
 class QuestionDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+
+    def get_permissions(self):
+        if self.request.method != 'GET':
+            return [IsAuthenticated()]
+        else:
+            return []
