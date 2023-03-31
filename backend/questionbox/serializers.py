@@ -40,7 +40,7 @@ class QuestionSerializer(serializers.ModelSerializer):
         read_only_fields = ('author',)
 
     def paginated_answers(self, obj):
-        page_size = 2
+        page_size = 10
         paginator = Paginator(obj.answers.all(), page_size)
         answers = paginator.page(1)
         serializer = AnswerSerializer(answers, many=True)
