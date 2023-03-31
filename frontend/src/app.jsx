@@ -25,13 +25,12 @@ export default function App() {
   const router = createBrowserRouter(  
       createRoutesFromElements(
         <>
-          <Route element = {<Header />}>
-            <Route element={<HomePage />} path="/" loader={ () => true } />
+          <Route element={<Header token={token} />}>
+            <Route element={<HomePage token={token} />} path="/" loader={ () => true } />
             <Route element={<LoginPage setAuth={ setAuth } />} path = "/login" />
             <Route element={<SignUpPage />} path="/sign-up" />
-            <Route element={<QuestionPage />} path="/question/:pk" />
-            <Route element={<UserPage />} path="/user/:pk" />
-            <Route element={<UserPage />} path="/profile" />
+            <Route element={<QuestionPage token={token} />} path="/question/:pk" />
+            <Route element={<UserPage token={token} />} path="/user/:username" />
           </Route>
         </>
       )
