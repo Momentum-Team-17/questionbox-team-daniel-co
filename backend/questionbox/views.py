@@ -3,6 +3,7 @@ from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticated
 from .models import User, Question, Answer, StarTracker
 from .serializers import QuestionSerializer, AnswerSerializer
+from .permissions import IsAuthor
 
 
 # Create your views here.
@@ -35,7 +36,7 @@ class QuestionDetails(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = QuestionSerializer
 
     def get_permissions(self):
-        if self.request.method != 'GET':
-            return [IsAuthenticated()]
-        else:
+        if self.request.method == 'GET':
             return []
+        else:
+            return [IsAuthenticated(), IsAuthor()]
