@@ -21,6 +21,16 @@ class QuestionList(generics.ListCreateAPIView):
             return [IsAuthenticated()]
 
 
+class ListUserQuestions(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Question.objects.filter(author__id=user.id)
+        return queryset
+
+
 class CreateAnswer(generics.CreateAPIView):
     queryset = Answer.objects.all()
     serializer_class = AnswerSerializer
