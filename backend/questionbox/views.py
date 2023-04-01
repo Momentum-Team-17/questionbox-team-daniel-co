@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticated
 from .models import User, Question, Answer, StarTracker
@@ -10,6 +11,8 @@ from .permissions import IsAuthor
 class QuestionList(generics.ListCreateAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['author']
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
