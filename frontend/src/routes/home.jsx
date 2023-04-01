@@ -14,7 +14,7 @@ import { Menu, Transition } from '@headlessui/react'
 
 
 export default function HomePage() {
-  const data = useLoaderData()
+  const data = useLoaderData().data
   console.log(data)
   return (
   <>
@@ -134,6 +134,7 @@ function PageHeader() {
 }
 
 function Card({ data }) {
+  console.log(data);
   return (
     <>
       
