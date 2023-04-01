@@ -41,6 +41,16 @@ class CreateAnswer(generics.CreateAPIView):
         serializer.save(author=self.request.user, question=question)
 
 
+class ListUserAnswers(generics.ListAPIView):
+    serializer_class = AnswerSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Answer.objects.filter(author__id=user.id)
+        return queryset
+
+
 class QuestionDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
