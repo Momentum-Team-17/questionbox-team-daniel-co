@@ -18,7 +18,7 @@ export default function App() {
   const [username, setUserName] = useState()
   const homeData = useRef()
 
-  const URL = 'https://questionbox-mgxz.onrender.com/'
+  const URL = 'https://questionbox-mgxz.onrender.com'
 
   const setAuth = (token, username) => {
     setToken(token);
@@ -36,13 +36,13 @@ export default function App() {
   }
 
   const loadQuestion = async ({params}) => {
-    console.log(params.params.pk);
+    console.log(params.pk);
     if (homeData.current) {
       //console.log(homeData.results.filter((q) => q.pk === pk));
       return homeData.results.filter((q) => q.pk === pk)
     }
     
-    const res = await axios.get(`${URL}questions/${params.params.pk}`)
+    const res = await axios.get(`${URL}/questions/${params.pk}`)
     if (res.status === 404) {
       throw new Response("Not Found", { status: 404 });
     }
@@ -51,7 +51,7 @@ export default function App() {
   
 
   const loadUser = async (params) => {
-    const res = await axios.get(`${URL}users/${params.username}`)
+    const res = await axios.get(`${URL}/users/${params.username}`)
     if (res.status === 404) {
       throw new Response("Not Found", { status: 404 });
     }
@@ -63,8 +63,8 @@ export default function App() {
         <>
           <Route element={<Header token={token} username={username} errorElement={ <><h1>Error!</h1><HomePage /></>} />}>
             <Route element={<HomePage token={token} />} path="/" loader={ loadHome } />
-            <Route element={<QuestionPage token={token} />}loader={(params)=>loadQuestion({params})} path="/question/:pk" /> //save yourself the API call and just filter to the pk of the main call as long as you have one ?? I think that makes sense
-            <Route element={<UserPage token={token} username={username} />} loader={ (params) => loadUser({params})} path="/user/:username" />
+            <Route element={<QuestionPage token={token} />}loader={(params)=>loadQuestion(params)} path="/question/:pk" /> //save yourself the API call and just filter to the pk of the main call as long as you have one ?? I think that makes sense
+            <Route element={<UserPage token={token} username={username} />} loader={ (params) => loadUser(params)} path="/user/:username" />
             <Route element={<LoginPage setAuth={ setAuth } />} path = "/login" />
             <Route element={<SignUpPage />} path="/sign-up" />
           </Route>
