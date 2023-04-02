@@ -4,15 +4,17 @@ import { ChevronDownIcon} from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faQuestion } from "@fortawesome/free-solid-svg-icons";
-
+import moment from 'moment'
 
 export default function HomePage() {
   const data = useLoaderData().data
   console.log(data)
   return (
   <>
-    <PageHeader />
-    {data.results.map((q) => <Card data={q} key={q.pk}/>)}
+      <PageHeader />
+      <div className="mx-6 my-3 grid grid-cols-1 divide-y">
+        {data.results.map((q) => <Question data={q} key={q.pk} />)}
+      </div>
   </>
 
   )
@@ -115,12 +117,14 @@ function PageHeader() {
   )
 }
 
-function Card({ data }) {
+function Question({ data }) {
   console.log(data);
   return (
-    <>
-      
-    </>
+    <div>
+      <h3 className="mt-1"><Link to={`/question/${data.pk}`} className="text-lg font-bold text-violet-800 dark:text-violet-500 hover:underline">{ data.title }</Link></h3>
+      <p className="text-sm"><Link to={`/user/${data.author}`} className="mt-1 mb-1 font-medium text-violet-600 dark:text-violet-300 hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()}</p>
+      <p className="text-md mt-1 mb-3">{ data.text }</p>
+    </div>
   )
 }
 
