@@ -37,10 +37,9 @@ export default function App() {
   }
 
   const loadQuestion = async ({params}) => {
-    console.log(params.pk);
+    //This if statement reuses the query from the home page if it exists to save a fetch - idk if this is best practice but it's more efficient
     if (homeData.current) {
-      //console.log(homeData.results.filter((q) => q.pk === pk));
-      return homeData.results.filter((q) => q.pk === pk)
+      return homeData.current.results.filter((q) => q.pk === params.pk)
     }
     
     const res = await axios.get(`${URL}/questions/${params.pk}`)
@@ -52,7 +51,7 @@ export default function App() {
   
 
   const loadUser = async ({params}) => {
-    const res = await axios.get(`${URL}/users/${params.username}`)
+    const res = await axios.get(`${URL}/auth/users/${params.username}`)
     if (res.status === 404) {
       throw new Response("Not Found", { status: 404 });
     }
