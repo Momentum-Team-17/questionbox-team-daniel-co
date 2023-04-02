@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models.constraints import UniqueConstraint
 
 
 class User(AbstractUser):
@@ -19,6 +20,10 @@ class Question(models.Model):
 
     class Meta:
         ordering = ['-time_created']
+        constraints = [
+            UniqueConstraint(
+                fields=['text', 'author'], name='question_constraints')
+        ]
 
     @property
     def accepted_answer(self):
@@ -42,9 +47,13 @@ class Answer(models.Model):
 
     class Meta:
         ordering = ['-time_created']
+        constraints = [
+            UniqueConstraint(
+                fields=['text', 'author', 'question'], name='answer_constraints')
+        ]
 
-        def __str__(self):
-            return f'{self.question} answer by {self.author}'
+    def __str__(self):
+        return f'{self.question} answer by {self.author}'
 
 
 class StarTracker(models.Model):
