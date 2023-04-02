@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Q
 from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticated
 from .models import User, Question, Answer, StarTracker
@@ -63,3 +64,15 @@ class QuestionDetails(generics.RetrieveUpdateDestroyAPIView):
             return []
         else:
             return [IsAuthenticated(), IsAuthor()]
+
+
+class QuestionSearch(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+    # model = Question
+    # context_object_name = "questions"
+
+    def get_queryset(self):
+        query = self.request.query_params.get('q', None)
+        if query:
+            return Question.objects.filter(text__icontains=query)
+        return Question.objects.all()
