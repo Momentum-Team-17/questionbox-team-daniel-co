@@ -10,4 +10,5 @@ urlpatterns = [
     path('users/answers', views.ListUserAnswers.as_view()),
     path('search', views.QuestionSearch.as_view(), name='question-search'),
     path('profile/<int:pk>', views.UserDetailView.as_view()),
+    path('questions/favorite', views.favorite_question),
 ]
