@@ -8,8 +8,17 @@ import moment from 'moment'
 import axios from "axios";
 
 export default function HomePage() {
-  const data = useLoaderData().data
-  return (
+    const [data, setData] = useState()
+  
+  useEffect( () => {
+    const URL = 'https://questionbox-mgxz.onrender.com'
+    axios.get(URL).then((res) => {
+      setData(res.data)
+    })
+
+  },[])
+
+  if (data) return (
   <>
       <PageHeader />
       <div className="mx-6 my-3 grid grid-cols-1 divide-y">
