@@ -2,19 +2,19 @@
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faInbox } from '@fortawesome/free-solid-svg-icons'
 import '../styles/header.css'
-import { Outlet } from 'react-router-dom'
+import { Link, Outlet } from 'react-router-dom'
 export default function Header() {
 
   return (
     <>
       <header className="bg-white">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+        <nav className="mx-6 flex items-center justify-between py-6" aria-label="Global">
           <div className="flex sm:flex-1">
-            <a href="" className="-m-1.5 p-1.5 grow">
-              <h1 className='title font-semibold'>
+            <Link to="/" className="-m-1.5 p-1.5 grow">
+              <h1 className='title font-bold text-2xl'>
               <FontAwesomeIcon icon={faInbox} />
                &nbsp;QuestionBox</h1>
-            </a>
+            </Link>
           </div>
           <div className="hidden sm:flex sm:flex-none sm:justify-end mx-4">
             <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
