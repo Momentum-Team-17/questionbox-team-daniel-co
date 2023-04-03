@@ -36,11 +36,7 @@ export default function App() {
     return res
   }
 
-  const loadQuestion = async ({params}) => {
-    //This if statement reuses the query from the home page if it exists to save a fetch - idk if this is best practice but it's more efficient
-    if (homeData.current) {
-      return homeData.current.results.filter((q) => q.pk === params.pk)
-    }
+  const loadQuestion = async ({ params }) => {
     
     const res = await axios.get(`${URL}/questions/${params.pk}`)
     if (res.status === 404) {
