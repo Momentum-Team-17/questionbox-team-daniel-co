@@ -68,11 +68,11 @@ class QuestionDetails(generics.RetrieveUpdateDestroyAPIView):
 
 class QuestionSearch(generics.ListAPIView):
     serializer_class = QuestionSerializer
-    # model = Question
-    # context_object_name = "questions"
+    model = Question
+    context_object_name = "questions"
 
     def get_queryset(self):
-        query = self.request.query_params.get('q', None)
+        query = self.request.GET.get('q')
         if query:
             return Question.objects.filter(text__icontains=query)
         return Question.objects.all()
