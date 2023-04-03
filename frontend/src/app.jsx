@@ -16,7 +16,7 @@ import Page404 from './routes/404'
 
 export default function App() {
   const [token, setToken] = useLocalStorageState('token')
-  const [username, setUserName] = useState()
+  const [username, setUsername] = useState("chris")
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isSignupOpen, setIsSignupOpen] = useState(false)
   const homeData = useRef()
@@ -31,7 +31,6 @@ export default function App() {
 
   const loadHome = async () => {
     const res = await axios.get(URL)
-    homeData.current = (res.data)
 
     if (res.status === 404) {
       throw new Response("Not Found", { status: 404 });
@@ -60,8 +59,9 @@ export default function App() {
   const router = createBrowserRouter(  
       createRoutesFromElements(
         <>
-          <Route element={<Header token={token} username={username} errorElement={Page404} setAuth={setAuth}
-            isLoginOpen={isLoginOpen} setIsLoginOpen={setIsLoginOpen} isSignupOpen={ isSignupOpen } setIsSignupOpen={ setIsSignupOpen} />}>
+          <Route element={<Header token={token} username={username} setUsername={ setUsername } errorElement={Page404} setAuth={setAuth}
+            isLoginOpen={isLoginOpen} setIsLoginOpen={setIsLoginOpen} isSignupOpen={isSignupOpen} setIsSignupOpen={setIsSignupOpen}
+            />}>
             <Route element={<HomePage token={token} />} path="/" loader={ loadHome } />
             <Route element={<QuestionPage token={token} />}loader={(params)=>loadQuestion(params)} path="/question/:pk" /> //save yourself the API call and just filter to the pk of the main call as long as you have one ?? I think that makes sense
             <Route element={<UserPage token={token} username={username} />} loader={ (params) => loadUser(params)} path="/user/:username" />

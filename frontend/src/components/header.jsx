@@ -6,24 +6,42 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { faUser, faLock, faAt } from "@fortawesome/free-solid-svg-icons"
+import useLocalStorageState from 'use-local-storage-state'
 
+class Input {
+  constructor(label, type, value, onChange, icon) {
+    this.label = label
+    this.type = type
+    this.value = value
+    this.onChange = onChange
+    this.icon = icon
+  }
+}
 
 
 export default function Header(props) {
-  const [email, setEmail] = useLocalStorageState()
-  const [password, setPassword] = useLocalStorageState()
-  const [confirmPassword, setConfirmPassword] = useLocalStorageState()
+  const [email, setEmail] = useState()
+  const [password, setPassword] = useState()
+  const [confirmPassword, setConfirmPassword] = useState()
 
+  console.log(props)
+  const handleLogin = (e) => {
+    e.preventDefault()
+  }
+
+  const handleRegisterUser = (e) => {
+    e.preventDefault()
+  }
   
   const loginFields = {
     title: "Login",
-    inputs: [new Input("Username", "text", props.userName, props.setUserName, { faUser }),
-      new Input("Password", "password", props.password, props.setPassword, { faLock })],
+    inputs: [new Input("Username", "text", props.username, props.setUsername, { faUser }),
+      new Input("Password", "password", password, setPassword, { faLock })],
     onSubmit: handleLogin
   }
 
     const signupFields = {
-    title: "Login",
+    title: "Sign-up",
     inputs:
       [new Input("Email", "text", email, setEmail, { faAt }),
       new Input("Username", "text", props.userName,  props.setUserName, { faUser }),
@@ -32,22 +50,8 @@ export default function Header(props) {
     onSubmit: handleRegisterUser
   }
 
-  // If I want to handle xonfirm pw:
-  // const handleConfirmPassword = () => {
-  //   new Input("Password", "password", confirmPassword, handleConfirmPassword, { faLock }),
-  //   setConfirmPassword(confirmPassword)
-  //   if (confirmPassword != props.password) {
-      
-  //   }
-  // }
 
-  const handleLogin = () => {
-    
-  }
 
-  const handleRegisterUser = () => {
-
-  }
 
   return (
     <>
@@ -66,8 +70,8 @@ export default function Header(props) {
             </button>
           </div>
                     <div className="hidden sm:flex sm:flex-none sm:justify-end">
-            <button onClick={() => props.setIsSignupOpen(true)} className="rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
-              Sign-Up <span aria-hidden="true">&rarr;</span>
+            <button onClick={() => props.setIsSignupOpen(true)} className="rounded-md bg-black bg-opacity-30 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+              Sign-Up <span aria-hidden="true"></span>
             </button>
           </div>
         </nav>
@@ -82,12 +86,12 @@ export default function Header(props) {
   )
 }
 
-export function Modal(fields, isOpen, setIsOpen) {
-
+export function Modal({fields, isOpen, setIsOpen}) {
+  console.log(fields);
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Dialog as="div" className="relative z-10" onClose={() => setIsOpen(false)}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -118,15 +122,16 @@ export function Modal(fields, isOpen, setIsOpen) {
                   >
                     {fields.title}
                   </Dialog.Title>
-                  <form onSubmit={ fields.onSubmit }>
+                  <form onSubmit={ (e) => fields.onSubmit(e) }>
                     <div className="mt-2">
                       {fields.inputs.map((field) => {
-                        <div class="mb-4">
-                          <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                        // console.log(field);
+                        return(<div class="mb-4">
+                          <label key={field.label} class="block text-gray-700 text-sm font-bold mb-2" for="username">
                             {field.label}
                           </label>
-                          <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={field.value} onChange={field.onChange} id={`${field.label}-label`} type={ field.type } placeholder={field.label} />
-                      </div>
+                          <input key={ field.label } required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={field.value} onChange={(e) => field.onChange(e.target.value)} id={`${field.label}-label`} type={ field.type } placeholder={field.label} />
+                        </div>)
                       })}
                     </div>
 
