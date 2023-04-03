@@ -45,3 +45,19 @@ class QuestionSerializer(serializers.ModelSerializer):
         answers = paginator.page(1)
         serializer = AnswerSerializer(answers, many=True)
         return serializer.data
+
+
+class UserSerializer(serializers.ModelSerializer):
+    user_questions = QuestionSerializer(many=True)
+    user_answers = AnswerSerializer(many=True)
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'username',
+            'user_questions',
+            'user_answers',
+            'fav_questions',
+            'fav_answers',
+        )

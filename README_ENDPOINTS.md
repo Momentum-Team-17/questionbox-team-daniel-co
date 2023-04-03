@@ -39,5 +39,7 @@ users/answers ----> GET - shows list of answers created by the current user
 
 search ----> GET - search the text field of Questions
 
+profile/<int:pk> ----> GET | POST - shows user details with details of their authored questions and answers
+
 
  
