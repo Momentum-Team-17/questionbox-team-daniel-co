@@ -2,10 +2,11 @@ import { useState } from "react"
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons"
 
 
-class Input {
-  constructor(label, type, onChange, icon){
+export class Input {
+  constructor(label, type, value, onChange, icon){
         this.label = label
-        this.type = type
+    this.type = type
+    this.value = value
         this.onChange = onChange
         this.icon = icon
   }
