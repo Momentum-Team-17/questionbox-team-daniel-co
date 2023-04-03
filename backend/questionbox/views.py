@@ -4,7 +4,7 @@ from django.db.models import Q
 from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticated
 from .models import User, Question, Answer, StarTracker
-from .serializers import QuestionSerializer, AnswerSerializer
+from .serializers import QuestionSerializer, AnswerSerializer, UserSerializer
 from .permissions import IsAuthor
 
 
@@ -76,3 +76,9 @@ class QuestionSearch(generics.ListAPIView):
         if query:
             return Question.objects.filter(text__icontains=query)
         return Question.objects.all()
+
+
+class UserDetailView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    model = User
+    queryset = User.objects.all()

@@ -13,7 +13,8 @@ class User(AbstractUser):
 class Question(models.Model):
     title = models.CharField(max_length=100)
     text = models.TextField(max_length=5000)
-    author = models.ForeignKey(to='User', on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        to='User', on_delete=models.CASCADE, related_name='user_questions')
     time_created = models.DateTimeField(auto_now_add=True)
     # accepted_answer = models.OneToOneField(
     #     to='Answer', on_delete=models.CASCADE, blank=True, null=True, related_name='accepted_for')
@@ -41,7 +42,8 @@ class Answer(models.Model):
     question = models.ForeignKey(
         to='Question', on_delete=models.CASCADE, related_name='answers')
     text = models.TextField(max_length=5000)
-    author = models.ForeignKey(to='User', on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        to='User', on_delete=models.CASCADE, related_name='user_answers')
     time_created = models.DateTimeField(auto_now_add=True)
     is_accepted = models.BooleanField(default=False)
 
