@@ -8,4 +8,5 @@ urlpatterns = [
     path('questions/<int:pk>', views.QuestionDetails.as_view()),
     path('users/questions', views.ListUserQuestions.as_view()),
     path('users/answers', views.ListUserAnswers.as_view()),
+    path('search', views.QuestionSearch.as_view(), name='question-search'),
 ]

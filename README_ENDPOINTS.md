@@ -37,7 +37,7 @@ users/questions ----> GET - shows list of qeustions created by the current user
 
 users/answers ----> GET - shows list of answers created by the current user
 
-
+search ----> GET - search the text field of Questions
 
 
  
