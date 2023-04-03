@@ -50,6 +50,8 @@ class QuestionSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     user_questions = QuestionSerializer(many=True)
     user_answers = AnswerSerializer(many=True)
+    fav_questions = QuestionSerializer(many=True)
+    fav_answers = AnswerSerializer(many=True)
 
     class Meta:
         model = User
