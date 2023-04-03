@@ -8,7 +8,6 @@ import moment from 'moment'
 
 export default function HomePage() {
   const data = useLoaderData().data
-  console.log(data)
   return (
   <>
       <PageHeader />
@@ -33,26 +32,26 @@ function PageHeader() {
     <div className="p-6 md:flex md:items-center md:justify-between">
       <div className="min-w-0 flex-1">
         <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-          Questions
+          
         </h2> 
-        </div>
-        
-        <div className="mt-5 flex md:ml-4 md:mt-auto">
           <span className="hidden sm:block  mr-3">
             <button
               type="button"
               className="inline-flex border items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50">
-              <FontAwesomeIcon icon={faQuestion} className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
+              <FontAwesomeIcon icon={faQuestion} className="-ml-0.5 mr-1.5" aria-hidden="true" />
               Unanswered
             </button>
           </span>
+        </div>
+        
+        <div className="mt-5 flex md:ml-4 md:mt-auto">
           <span className="hidden sm:block">
             <div className="flex">
-              <div class="relative w-full">
-                <input type="search" id="search-dropdown" className="w-64 block p-2 w-full z-20 text-sm font-semibold text-gray-900 bg-white rounded-lg border box-border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white " placeholder="Search questions" required />
-                <button type="submit" className="absolute top-0 right-0 p-2 text-sm font-medium text-white bg-indigo-600 rounded-r-lg border box-border border-indigo-700 hover:bg-indigo-500 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
-                    <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <span class="sr-only">Search</span>
+              <div className="relative w-full">
+                <input type="search" id="search-dropdown" className=" block p-2 w-full z-20 text-sm font-semibold text-gray-900 bg-white rounded-lg border box-border border-gray-30 " placeholder="Search questions" required />
+                <button type="submit" className="absolute top-0 right-0 p-2 text-sm font-medium text-white bg-indigo-600 rounded-r-lg border box-border border-indigo-700 hover:bg-indigo-500 focus:outline-none focus:ring-blue-300  ">
+                    <svg aria-hidden="true" className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <span className="sr-only">Search</span>
                 </button>
               </div>
             </div>
@@ -99,11 +98,11 @@ function PageHeader() {
                 </Menu.Item>
                 <Menu.Item><>
                 <div className="flex">
-                  <div class="relative w-full">
-                    <input type="search" id="search-dropdown" className=" block p-2 w-full z-20 text-sm font-semibold text-gray-900 bg-white rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white " placeholder="Search questions" required />
-                    <button type="submit" className="absolute top-0 right-0 p-2 text-sm font-medium text-white bg-indigo-600 rounded-r-lg  border-indigo-700 hover:bg-indigo-500 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800">
-                        <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <span class="sr-only">Search</span>
+                  <div className="relative w-full">
+                    <input type="search" id="search-dropdown" className=" block p-2 w-full z-20 text-sm font-semibold text-gray-900 bg-white rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 " placeholder="Search questions" required />
+                    <button type="submit" className="absolute top-0 right-0 p-2 text-sm font-medium text-white bg-indigo-600 rounded-r-lg  border-indigo-700 hover:bg-indigo-500 focus:ring-4 focus:outline-none focus:ring-blue-300 ">
+                        <svg aria-hidden="true" className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <span className="sr-only">Search</span>
                     </button>
                   </div>
                 </div></>
@@ -121,13 +120,12 @@ function Question({ data }) {
   const pluralize = (count, noun, suffix = 's') =>
   `${count} ${noun}${count !== 1 ? suffix : ''}`;
 
-  console.log(data);
   return (
     <div>
-      <h3 className="mt-1"><Link to={`/question/${data.pk}`} className="text-lg font-bold text-violet-800 dark:text-violet-500 hover:underline">{ data.title }</Link></h3>
-      <p className="text-sm"><Link to={`/user/${data.author}`} className="my-1 font-medium text-violet-600 dark:text-violet-300 hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()} - {pluralize(data.answers.length, "answer")}</p>
+      <h3 className="mt-1"><Link to={`/question/${data.pk}`} className="text-lg font-bold text-violet-800  hover:underline">{ data.title }</Link></h3>
+      <p className="text-sm"><Link to={`/user/${data.author}`} className="my-1 font-medium text-violet-600  hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()} - {pluralize(data.answers.length, "answer")}</p>
       <p className="text-md my-1">{ data.text }</p>
-      <p className="text-sm mb-3"><Link to={`/questions/${data.pk}`} className="mt-1 mb-1 font-medium text-violet-600 dark:text-violet-300 hover:underline"></Link></p>
+      <p className="text-sm mb-3"><Link to={`/questions/${data.pk}`} className="mt-1 mb-1 font-medium text-violet-600 hover:underline"></Link></p>
     </div>
   )
 }
