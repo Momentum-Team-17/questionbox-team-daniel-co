@@ -103,3 +103,20 @@ def favorite_question(request):
     favorite_questions = serialize('json', request.user.fav_questions.all())
     favorite_questions = json.loads(favorite_questions)
     return Response(favorite_questions)
+
+
+@api_view(['PATCH'])
+@permission_classes((IsAuthenticated, ))
+def favorite_answer(request):
+    answer_pk = request.data.get('answer_pk')
+    answer = get_object_or_404(Answer, pk=answer_pk)
+    if answer in request.user.fav_answers.all():
+        request.user.fav_answers.remove(answer)
+        request.user.save()
+    else:
+        request.user.fav_answers.add(answer)
+        request.user.save()
+
+    favorite_answers = serialize('json', request.user.fav_answers.all())
+    favorite_answers = json.loads(favorite_answers)
+    return Response(favorite_answers)
