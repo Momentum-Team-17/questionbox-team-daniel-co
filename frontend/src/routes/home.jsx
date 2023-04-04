@@ -62,7 +62,7 @@ export default function HomePage(props) {
 
   if (data) return (
   <>
-      <PageHeader setIsCreateOpen={setIsCreateOpen} />
+      <PageHeader token={props.token} setIsCreateOpen={setIsCreateOpen} setIsLoginOpen={props.setIsLoginOpen} />
       <div className="mx-6 my-3 grid grid-cols-1 divide-y">
         {data.results.map((q) => <Question data={q} key={q.pk} search={search} setSearch={ setSearch } />)}
       </div>
@@ -73,7 +73,7 @@ export default function HomePage(props) {
 }
 
 
-function PageHeader({ setIsCreateOpen }) {
+function PageHeader({ token, setIsCreateOpen, setIsLoginOpen }) {
   //https://tailwindui.com/components/application-ui/headings/page-headings
   return (
   <div className="">
@@ -105,7 +105,7 @@ function PageHeader({ setIsCreateOpen }) {
           </span>
 
           <span className="ml-3 flex-none">
-            <button onClick={()=>setIsCreateOpen(true)}
+            <button onClick={token? ()=>setIsCreateOpen(true) : ()=>setIsLoginOpen(true)}
               type="button"
               className="inline-flex items-center rounded-md border bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 border box-border border-indigo-700"
             >
