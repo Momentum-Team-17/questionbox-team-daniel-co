@@ -22,7 +22,7 @@ auth/users/set_password/ ----> POST - changes user password
 
 auth/token/login ---> POST - obtains user authentication token
 
-auth/token/login/ ----> POST - logs out user (removes user authentication token)
+auth/token/logout/ ----> POST - logs out user (removes user authentication token)
 
 
 - Our app's urls:
@@ -37,7 +37,9 @@ users/questions ----> GET - shows list of qeustions created by the current user
 
 users/answers ----> GET - shows list of answers created by the current user
 
+search ----> GET - search the text field of Questions
 
+profile/<int:pk> ----> GET - shows user details with details of their authored questions and answers
 
-
+questions/favorite ----> PATCH - adds (favorites) or removes (un-favorites) question from user's fav_questions (the request requires a question_pk) -- <question_pk:pk>
  
