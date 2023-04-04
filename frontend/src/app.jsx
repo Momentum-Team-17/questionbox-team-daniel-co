@@ -16,7 +16,7 @@ import Page404 from './routes/404'
 
 export default function App() {
   const [token, setToken] = useLocalStorageState('token', { defaultValue:null})
-  const [username, setUsername] = useState("chris")
+  const [username, setUsername] = useLocalStorageState("username", { defaultValue:null})
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isSignupOpen, setIsSignupOpen] = useState(false)
 
