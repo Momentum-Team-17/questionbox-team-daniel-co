@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { ChevronDownIcon} from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
@@ -10,11 +10,18 @@ import { Input } from "../components/header";
 import { Dialog } from '@headlessui/react'
 
 export default function HomePage(props) {
-    const [data, setData] = useState()
+  const [data, setData] = useState()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [error, setError] = useState(false)
+  const [title, setTitle] = useState(null)
+  const [text, setText] = useState(null)
+  const [search, setSearch] = useState(null)
+
+  const navigate = useNavigate()
+  const URL = 'https://questionbox-mgxz.onrender.com'
+
+
   useEffect( () => {
-    const URL = 'https://questionbox-mgxz.onrender.com'
     axios.get(URL).then((res) => {
       setData(res.data)
     })
@@ -23,19 +30,41 @@ export default function HomePage(props) {
   
   const createFields = {
     title: "New Question",
-    inputs: [new Input("Title", "text", "props.username", null, { faUser })],
+    inputs: [new Input("Title", "text", title, setTitle, null),
+            new Input("Text", "text", text, setText, null)],
     onSubmit: handleNewQuestion
   }
 
-  function handleNewQuestion(){
-    
+  function handleNewQuestion(e){
+    setError(null)
+    e.preventDefault()
+    console.log(props.token);
+ 
+
+    axios.post(`${URL}/`,
+      {
+        "title": title,
+        "text":text
+      },
+      { headers : {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${ props.token }`
+      } })
+      .then((res) => {
+        props.setReloader(Math.random())
+      }).catch(function (error) {
+        if (error.response) {
+          console.log(error.response.data);
+          setError(error.response.data);
+        }
+      })
   }
 
   if (data) return (
   <>
       <PageHeader setIsCreateOpen={setIsCreateOpen} />
       <div className="mx-6 my-3 grid grid-cols-1 divide-y">
-        {data.results.map((q) => <Question data={q} key={q.pk} />)}
+        {data.results.map((q) => <Question data={q} key={q.pk} search={search} setSearch={ setSearch } />)}
       </div>
       <Modal fields={createFields} isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} error={ error } />
   </>
@@ -148,7 +177,7 @@ export function Modal({fields, isOpen, setIsOpen, error}) {
                   <form onSubmit={ (e) => fields.onSubmit(e) }>
                     <div className="mt-2">
                       {fields.inputs.map((field) => {
-                        return(<div class="mb-4">
+                        return (<div class="mb-4" key={` ${field.label}div `}>
                           <label key={field.label} class="block text-gray-700 text-sm font-bold mb-2" for="username">
                             {field.label}
                           </label>
@@ -165,7 +194,7 @@ export function Modal({fields, isOpen, setIsOpen, error}) {
                         type="submit"
                         className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       >
-                        {fields.title}
+                        Post
                       </button>
                     </div>
                   </form>
