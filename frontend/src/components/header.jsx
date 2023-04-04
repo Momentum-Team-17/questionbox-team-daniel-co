@@ -71,16 +71,20 @@ export default function Header(props) {
     setError(null)
     setSuccess(null)
     e.preventDefault()
-    axios.post(`${URL}/auth/token/login/`, {
-      "username": props.username,
-      "password": password,
-    }).then((res) => {
-      console.log("success",res.data);
-      props.setToken(res.data.auth_token)
+    console.log(props.token);
+
+    const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${ props.token }`
+      }
+
+    axios.post(`${URL}/auth/users/me/`, { headers })
+      .then((res) => {
+      props.setToken(null)
       setSuccess(false)
-      props.setIsLoginOpen(false)
     }).catch(function (error) {
       if (error.response) {
+        console.log(error.response.data);
         setError(error.response.data);
         setSuccess(false)
       }
@@ -200,7 +204,7 @@ export function Modal({fields, isOpen, setIsOpen, error, success}) {
                         </div>)
                       })}
                       {error && Object.keys(error).map((key) => {
-                        return <h2 key={key}> <span className="capitalize font-bold">{key}: </span>{error[key].join(' ')}</h2>
+                        return <h2 key={key}> <span className="capitalize font-bold">{key}: </span>{typeof(error[key]) === 'string' ? error[key] : error[key].join(' ')}</h2>
                       })}
                     </div>
 
