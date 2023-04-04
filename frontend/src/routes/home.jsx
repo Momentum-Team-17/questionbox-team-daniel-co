@@ -1,16 +1,27 @@
 import { Link, useLoaderData } from "react-router-dom";
-import { Fragment } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { ChevronDownIcon} from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import moment from 'moment'
+import axios from "axios";
 
-export default function HomePage() {
-  const data = useLoaderData().data
-  return (
+export default function HomePage(props) {
+    const [data, setData] = useState()
+  
+  useEffect( () => {
+    const URL = 'https://questionbox-mgxz.onrender.com'
+    axios.get(URL).then((res) => {
+      setData(res.data)
+    })
+
+  },[])
+
+  if (data) return (
   <>
       <PageHeader />
+      <button onClick={() => { props.setToken((setToken) => { setToken + 1 }) }}>hi</button>
       <div className="mx-6 my-3 grid grid-cols-1 divide-y">
         {data.results.map((q) => <Question data={q} key={q.pk} />)}
       </div>
@@ -19,11 +30,6 @@ export default function HomePage() {
   )
 }
 
-
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
 
 function PageHeader() {
   //https://tailwindui.com/components/application-ui/headings/page-headings
@@ -66,50 +72,6 @@ function PageHeader() {
               New Question
             </button>
           </span>
-
-          {/* Dropdown */}
-          <div className="relative sm:hidden">
-
-          </div>
-          <Menu as="div" className="relative ml-3 sm:hidden">
-            <Menu.Button className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm border border-gray-300 hover:ring-gray-400">
-              More
-              <ChevronDownIcon className="-mr-1 ml-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-            </Menu.Button>
-
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-200"
-              enterFrom="transform opacity-0 scale-95"
-              enterTo="transform opacity-100 scale-100"
-              leave="transition ease-in duration-75"
-              leaveFrom="transform opacity-100 scale-100"
-              leaveTo="transform opacity-0 scale-95"
-            >
-              <Menu.Items className="absolute right-0 z-10 -mr-1 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                <Menu.Item>
-                  {({ active }) => (
-                    <Link
-                      to="#"
-                      className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
-                      Unanswered
-                    </Link>        
-                  )}
-                </Menu.Item>
-                <Menu.Item><>
-                <div className="flex">
-                  <div className="relative w-full">
-                    <input type="search" id="search-dropdown" className=" block p-2 w-full z-20 text-sm font-semibold text-gray-900 bg-white rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 " placeholder="Search questions" required />
-                    <button type="submit" className="absolute top-0 right-0 p-2 text-sm font-medium text-white bg-indigo-600 rounded-r-lg  border-indigo-700 hover:bg-indigo-500 focus:ring-4 focus:outline-none focus:ring-blue-300 ">
-                        <svg aria-hidden="true" className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <span className="sr-only">Search</span>
-                    </button>
-                  </div>
-                </div></>
-                </Menu.Item>
-              </Menu.Items>
-            </Transition>
-          </Menu>
         </div>
       </div>
     </div>
@@ -117,6 +79,7 @@ function PageHeader() {
 }
 
 function Question({ data }) {
+  
   const pluralize = (count, noun, suffix = 's') =>
   `${count} ${noun}${count !== 1 ? suffix : ''}`;
 
