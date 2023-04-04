@@ -7,6 +7,7 @@ import { Fragment, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { faUser, faLock, faAt } from "@fortawesome/free-solid-svg-icons"
 import useLocalStorageState from 'use-local-storage-state'
+import axios from 'axios'
 
 class Input {
   constructor(label, type, value, onChange, icon) {
@@ -27,6 +28,8 @@ export default function Header(props) {
   console.log(props)
   const handleLogin = (e) => {
     e.preventDefault()
+
+    axios.post()
   }
 
   const handleRegisterUser = (e) => {
@@ -58,11 +61,11 @@ export default function Header(props) {
       <header className="bg-white">
         <nav className="mx-6 flex items-center justify-between py-6" aria-label="Global">
           <div className="flex sm:flex-1">
-            <a href="/" className="-m-1.5 p-1.5 grow">
+            <Link to="/" className="-m-1.5 p-1.5 grow">
               <h1 className='title font-bold text-2xl'>
               <FontAwesomeIcon icon={faInbox} />
                &nbsp;QuestionBox</h1>
-            </a>
+            </Link>
           </div>
           <div className="hidden sm:flex sm:flex-none sm:justify-end mx-4">
             <button onClick={() => props.setIsLoginOpen(true)} className="text-sm font-semibold leading-6 text-gray-900">
@@ -80,7 +83,7 @@ export default function Header(props) {
       <Modal fields={loginFields} isOpen={props.isLoginOpen} setIsOpen={props.setIsLoginOpen} />
       <Modal fields={signupFields} isOpen={props.isSignupOpen} setIsOpen={props.setIsSignupOpen} />
       <main>
-        {/* <Outlet /> */}
+        <Outlet />
       </main>
     </>
   )

@@ -1,12 +1,23 @@
 import { faArrowRight, faCaretLeft, faCaretRight, faCheck, faHeart, faPlus, faQuestion } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import axios from "axios"
 import moment from "moment"
-import { Link, useLoaderData, useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react"
+import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom"
 
 export default function QuestionPage() {
-   const data = useLoaderData().data
-  console.log(useLoaderData())
-  return (
+  const [data, setData] = useState()
+  const {pk} = useParams()
+
+  useEffect( () => {
+    const URL = 'https://questionbox-mgxz.onrender.com'
+    axios.get(`${URL}/questions/${pk}`).then((res) => {
+      setData(res.data)
+    })
+
+  },[])
+  
+  if(data) return (
     <>
       <PageHeader data={ data } />
       <div className="mx-6 grid grid-cols-1 divide-y">
@@ -15,7 +26,7 @@ export default function QuestionPage() {
         {/* {post new answers if logged in } */}
         <div>
           <h3 className="text-xl font-bold mt-3">Answers</h3>
-          { data.answers.map((a) => <Answer data = {a} />) }
+          { data.answers.map((a) => <Answer key={a.pk} data = {a} />) }
         </div>
       </div>
   </>

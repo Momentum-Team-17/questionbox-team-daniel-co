@@ -7,7 +7,7 @@ import { faPlus, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import moment from 'moment'
 import axios from "axios";
 
-export default function HomePage() {
+export default function HomePage(props) {
     const [data, setData] = useState()
   
   useEffect( () => {
@@ -21,6 +21,7 @@ export default function HomePage() {
   if (data) return (
   <>
       <PageHeader />
+      <button onClick={() => { props.setToken((setToken) => { setToken + 1 }) }}>hi</button>
       <div className="mx-6 my-3 grid grid-cols-1 divide-y">
         {data.results.map((q) => <Question data={q} key={q.pk} />)}
       </div>
