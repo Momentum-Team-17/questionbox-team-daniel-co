@@ -42,4 +42,6 @@ search ----> GET - search the text field of Questions
 profile/<int:pk> ----> GET - shows user details with details of their authored questions and answers
 
 questions/favorite ----> PATCH - adds (favorites) or removes (un-favorites) question from user's fav_questions (the request requires a question_pk) -- <question_pk:pk>
+
+answers/favorite ----> PATCH - adds (favorites) or removes (un-favorites) an answer from user's fav_answers (the request requires and answer pk) -- <answer_pk:pk>
  
