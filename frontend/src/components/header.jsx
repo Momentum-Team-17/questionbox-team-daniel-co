@@ -24,16 +24,67 @@ export default function Header(props) {
   const [email, setEmail] = useState()
   const [password, setPassword] = useState()
   const [confirmPassword, setConfirmPassword] = useState()
-
-  console.log(props)
+  const [error, setError] = useState()
+  const [success, setSuccess] = useState()
+  const URL = "https://questionbox-mgxz.onrender.com"
+  
   const handleLogin = (e) => {
+    setError(null)
+    setSuccess(null)
     e.preventDefault()
-
-    axios.post()
+    axios.post(`${URL}/auth/token/login/`, {
+      "username": props.username,
+      "password": password,
+    }).then((res) => {
+      console.log("success",res.data);
+      props.setToken(res.data.auth_token)
+      setSuccess(false)
+      props.setIsLoginOpen(false)
+    }).catch(function (error) {
+      if (error.response) {
+        setError(error.response.data);
+        setSuccess(false)
+      }
+    })
   }
 
   const handleRegisterUser = (e) => {
     e.preventDefault()
+    setError(null)
+    setSuccess(null)
+    axios.post(`${URL}/auth/users/`, {
+      "username": props.username,
+      "password": password,
+      "email": email,
+    }).then((res) => {
+      console.log("success",res.data.auth_token);
+      props.setIsSignupOpen(false)
+      props.setIsLoginOpen(true)
+      setSuccess(true)
+    }).catch(function (error) {
+      if (error.response) {
+        setError(error.response.data);
+      }
+    })
+  }
+  const handleLogout = (e) => {
+    setError(null)
+    setSuccess(null)
+    e.preventDefault()
+    axios.post(`${URL}/auth/token/login/`, {
+      "username": props.username,
+      "password": password,
+    }).then((res) => {
+      console.log("success",res.data);
+      props.setToken(res.data.auth_token)
+      setSuccess(false)
+      props.setIsLoginOpen(false)
+    }).catch(function (error) {
+      if (error.response) {
+        setError(error.response.data);
+        setSuccess(false)
+      }
+    })
   }
   
   const loginFields = {
@@ -47,14 +98,11 @@ export default function Header(props) {
     title: "Sign-up",
     inputs:
       [new Input("Email", "text", email, setEmail, { faAt }),
-      new Input("Username", "text", props.userName,  props.setUserName, { faUser }),
+      new Input("Username", "text", props.username,  props.setUsername, { faUser }),
       new Input("Password", "password", password, setPassword, { faLock }),
       ],
     onSubmit: handleRegisterUser
   }
-
-
-
 
   return (
     <>
@@ -67,21 +115,37 @@ export default function Header(props) {
                &nbsp;QuestionBox</h1>
             </Link>
           </div>
-          <div className="hidden sm:flex sm:flex-none sm:justify-end mx-4">
-            <button onClick={() => props.setIsLoginOpen(true)} className="text-sm font-semibold leading-6 text-gray-900">
-              Log in <span aria-hidden="true">&rarr;</span>
-            </button>
-          </div>
-                    <div className="hidden sm:flex sm:flex-none sm:justify-end">
-            <button onClick={() => props.setIsSignupOpen(true)} className="rounded-md bg-black bg-opacity-30 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
-              Sign-Up <span aria-hidden="true"></span>
-            </button>
-          </div>
+          {props.token
+            ? <>
+              <div className="hidden sm:flex sm:flex-none sm:justify-end mx-4">
+              <button onClick={handleLogout} className="text-sm font-semibold leading-6 text-gray-900">
+                Log Out <span aria-hidden="true">&rarr;</span>
+              </button>
+            </div>
+              <div className="hidden sm:flex sm:flex-none sm:justify-end">
+                <Link to={ `/user/${props.username}`} className="rounded-md bg-black bg-opacity-30 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+                  <FontAwesomeIcon icon={ faUser } />
+                </Link>
+              </div>
+            </>
+            
+            :
+            <><div className="hidden sm:flex sm:flex-none sm:justify-end mx-4">
+              <button onClick={() => props.setIsLoginOpen(true)} className="text-sm font-semibold leading-6 text-gray-900">
+                Log in <span aria-hidden="true">&rarr;</span>
+              </button>
+            </div>
+              <div className="hidden sm:flex sm:flex-none sm:justify-end">
+                <button onClick={() => props.setIsSignupOpen(true)} className="rounded-md bg-black bg-opacity-30 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+                  Sign-Up <span aria-hidden="true"></span>
+                </button>
+              </div>
+            </>}
         </nav>
 
       </header>
-      <Modal fields={loginFields} isOpen={props.isLoginOpen} setIsOpen={props.setIsLoginOpen} />
-      <Modal fields={signupFields} isOpen={props.isSignupOpen} setIsOpen={props.setIsSignupOpen} />
+      <Modal fields={loginFields} isOpen={props.isLoginOpen} setIsOpen={props.setIsLoginOpen} error={ error } success = { success } />
+      <Modal fields={signupFields} isOpen={props.isSignupOpen} setIsOpen={props.setIsSignupOpen} error={ error } success = { success }/>
       <main>
         <Outlet />
       </main>
@@ -89,8 +153,7 @@ export default function Header(props) {
   )
 }
 
-export function Modal({fields, isOpen, setIsOpen}) {
-  console.log(fields);
+export function Modal({fields, isOpen, setIsOpen, error, success}) {
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -125,16 +188,19 @@ export function Modal({fields, isOpen, setIsOpen}) {
                   >
                     {fields.title}
                   </Dialog.Title>
+                  {success && <h2 className="font-bold">User successfully created! Please login.</h2> }
                   <form onSubmit={ (e) => fields.onSubmit(e) }>
                     <div className="mt-2">
                       {fields.inputs.map((field) => {
-                        // console.log(field);
                         return(<div class="mb-4">
                           <label key={field.label} class="block text-gray-700 text-sm font-bold mb-2" for="username">
                             {field.label}
                           </label>
-                          <input key={ field.label } required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={field.value} onChange={(e) => field.onChange(e.target.value)} id={`${field.label}-label`} type={ field.type } placeholder={field.label} />
+                          <input key={` ${field.label}inp `} required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={field.value} onChange={(e) => field.onChange(e.target.value)} id={`${field.label}-label`} type={ field.type } placeholder={field.label} />
                         </div>)
+                      })}
+                      {error && Object.keys(error).map((key) => {
+                        return <h2 key={key}> <span className="capitalize font-bold">{key}: </span>{error[key].join(' ')}</h2>
                       })}
                     </div>
 
@@ -142,7 +208,6 @@ export function Modal({fields, isOpen, setIsOpen}) {
                       <button
                         type="submit"
                         className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                        // onClick={() => setIsOpen(false)}
                       >
                         {fields.title}
                       </button>

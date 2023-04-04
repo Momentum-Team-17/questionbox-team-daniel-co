@@ -15,7 +15,7 @@ import Page404 from './routes/404'
 
 
 export default function App() {
-  const [token, setToken] = useState(1)
+  const [token, setToken] = useLocalStorageState('token', { defaultValue:null})
   const [username, setUsername] = useState("chris")
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isSignupOpen, setIsSignupOpen] = useState(false)
@@ -25,38 +25,12 @@ export default function App() {
 
   const setAuth = (token, username) => {
     setToken(token);
-    setUserName(username);
+    setUsername(username);
   }
 
-
-
-  const loadUser = async ({ params }) => {
-    const URL = 'https://questionbox-mgxz.onrender.com'
-    const res = await axios.get(`${URL}/auth/users/${params.username}`)
-    if (res.status === 404) {
-      throw new Response("Not Found", { status: 404 });
-    }
-    return res
-  }
-
-  // const router = createBrowserRouter(  
-  //     createRoutesFromElements(
-  //       <>
-
-  //           <Route element={<HomePage setToken={setToken} />} path="/" loader={ loadHome } />
-  //           <Route element={<QuestionPage token={token} />}loader={(params)=>loadQuestion(params)} path="/question/:pk" /> 
-  //           <Route element={<UserPage token={token} username={username} />} loader={ (params) => loadUser(params)} path="/user/:username" />
-  //           <Route element={<LoginPage setAuth={ setAuth } />} path = "/login" />
-  //           <Route element={<SignUpPage />} path="/sign-up" />
-  //           <Route element={<Page404 />} path="/*" />
-
-  //       </>
-  //     )
-  //   )
-  
   return (
     <><Routes>
-        <Route element={<Header token={token} username={username} setUsername={ setUsername } errorElement={Page404} setAuth={setAuth}
+      <Route element={<Header token={token} username={username} setUsername={ setUsername } setToken={ setToken } errorElement={Page404}
           isLoginOpen={isLoginOpen} setIsLoginOpen={setIsLoginOpen} isSignupOpen={isSignupOpen} setIsSignupOpen={setIsSignupOpen}/>}>
           <Route element={<HomePage setToken={setToken} />} path="/" />
           <Route element={<QuestionPage token={token} />} path="/question/:pk" /> 

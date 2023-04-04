@@ -44,7 +44,7 @@ function PageHeader({data}) {
 
   return (
     <div className="">
-      <div className="mx-6 mt-6 md:flex md:items-center md:justify-between">
+      <div className="mx-6 mt-6 flex items-center justify-between">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:tracking-tight">
             {data.title}
@@ -95,7 +95,7 @@ function Answer({ data }) {
   const handleFavorite = () => { }
   
   return (
-     <div className="md:flex md:items-top md:justify-between">
+     <div className="flex items-top justify-between">
       <div className="mr-2 mt-1 flex flex-col align-top">
         {/* show if logged in user = user */}
         <button
