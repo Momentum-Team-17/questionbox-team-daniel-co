@@ -4,11 +4,15 @@ import axios from "axios"
 import moment from "moment"
 import { useState, useEffect } from "react"
 import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom"
+import { Input } from "../components/header";
 
-export default function QuestionPage({ setIsLoginOpen }) {
+export default function QuestionPage({ token, setIsLoginOpen }) {
   const [data, setData] = useState()
   const [isCreateAnswerOpen, setIsCreateAnswerOpen] = useState(false)
-  const {pk} = useParams()
+  const [answer, setAnswer] = useState()
+  const [error, setError] = useState()
+  const { pk } = useParams()
+  
 
   useEffect( () => {
     const URL = 'https://questionbox-mgxz.onrender.com'
@@ -16,7 +20,17 @@ export default function QuestionPage({ setIsLoginOpen }) {
       setData(res.data)
     })
 
-  },[])
+  }, [])
+  
+  const handleNewAnswer = (e) => {
+    
+  }
+  
+  const createFields = {
+    title: "New Answer",
+    inputs: [new Input("Answer", "text", answer, setAnswer, null),],
+    onSubmit: handleNewAnswer
+  }
   
   if (data) {
     console.log(data);
@@ -39,6 +53,7 @@ export default function QuestionPage({ setIsLoginOpen }) {
               <div className="h-96 flex items-center justify-center"><h1 className="h-64 text-2xl text-center font-bold text-gray-500">No answers!<br />...Yet</h1></div>}
           </div>
         </div>
+         <Modal fields={createFields} isOpen={isCreateAnswerOpen} setIsOpen={setIsCreateAnswerOpen} error={ error } />
       </>
 
     )
@@ -135,5 +150,77 @@ function Answer({ data }) {
   )
 }
 
+function Modal({fields, isOpen, setIsOpen, error}) {
+  return (
+    <>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={() => setIsOpen(false)}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900"
+                  >
+                    {fields.title}
+                  </Dialog.Title>
+                  <form onSubmit={ (e) => fields.onSubmit(e) }>
+                    <div className="mt-2">
+                      {fields.inputs.map((field) => {
+                        return (<div class="mb-4" key={` ${field.label}div `}>
+                          <label key={field.label} class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                            {field.label}
+                          </label>
+                          <input key={` ${field.label}inp `} required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={field.value} onChange={(e) => field.onChange(e.target.value)} id={`${field.label}-label`} type={ field.type } placeholder={field.label} />
+                        </div>)
+                      })}
+                      {error && Object.keys(error).map((key) => {
+                        return <h2 key={key}> <span className="capitalize font-bold">{key}: </span>{typeof(error[key]) === 'string' ? error[key] : error[key].join(' ')}</h2>
+                      })}
+                    </div>
+
+                    <div className="mt-4">
+                      <button
+                        type="submit"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      >
+                        Post
+                      </button>
+                    </div>
+                  </form>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  )
+}
+
+
 const pluralize = (count, noun, suffix = 's') =>
-`${count} ${noun}${count !== 1 ? suffix : ''}`;
+  `${count} ${noun}${count !== 1 ? suffix : ''}`;
+
+

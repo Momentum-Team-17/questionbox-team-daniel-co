@@ -139,7 +139,7 @@ function Question({ data }) {
 
 
 
-export function Modal({fields, isOpen, setIsOpen, error}) {
+function Modal({fields, isOpen, setIsOpen, error}) {
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
