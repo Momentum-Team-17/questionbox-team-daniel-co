@@ -136,3 +136,23 @@ class AcceptAnswer(generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         serializer.save()
+
+
+class ListFavoriteQuestions(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Question.objects.filter(users__id=user.id)
+        return queryset
+
+
+class ListFavoriteAnswers(generics.ListAPIView):
+    serializer_class = AnswerSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Answer.objects.filter(users__id=user.id)
+        return queryset
