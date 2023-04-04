@@ -9,7 +9,7 @@ import { faUser, faLock, faAt } from "@fortawesome/free-solid-svg-icons"
 import useLocalStorageState from 'use-local-storage-state'
 import axios from 'axios'
 
-class Input {
+export class Input {
   constructor(label, type, value, onChange, icon) {
     this.label = label
     this.type = type
