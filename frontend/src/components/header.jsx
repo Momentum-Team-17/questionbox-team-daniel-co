@@ -9,7 +9,8 @@ import { faUser, faLock, faAt } from "@fortawesome/free-solid-svg-icons"
 import useLocalStorageState from 'use-local-storage-state'
 import axios from 'axios'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
-import {usePopper} from 'react-popper'
+import { usePopper } from 'react-popper'
+
 export class Input {
   constructor(label, type, value, onChange, icon) {
     this.label = label
@@ -262,11 +263,11 @@ function Dropdown({ username, handleLogout }) {
                 ref={setPopperElement}
                 style={styles.popper}
                 {...attributes.popper}
-                className="z-10  w-64 transform px-5 py-2 ">
+                className="z-10  w-64 px-5 py-2 ">
                 <div className="bg-white overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
                       <div
                         onClick={handleLogout}
-                        className="m-2 flex items-center justify-between rounded-lg p-2 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                        className="m-2 flex items-center justify-between rounded-lg p-2 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-indigo-500 focus-visible:ring-opacity-50"
                       >
                         <div className="ml-4">
                           <p className=" text-sm font-medium text-gray-900">
