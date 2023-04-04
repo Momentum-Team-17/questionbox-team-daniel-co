@@ -16,9 +16,10 @@ import Page404 from './routes/404'
 
 export default function App() {
   const [token, setToken] = useLocalStorageState('token', { defaultValue:null})
-  const [username, setUsername] = useState("chris")
+  const [username, setUsername] = useLocalStorageState("username", { defaultValue:null})
   const [isLoginOpen, setIsLoginOpen] = useState(false)
   const [isSignupOpen, setIsSignupOpen] = useState(false)
+  const [reloader, setReloader] = useState(1)
 
 
   
@@ -32,11 +33,11 @@ export default function App() {
     <><Routes>
       <Route element={<Header token={token} username={username} setUsername={ setUsername } setToken={ setToken } errorElement={Page404}
           isLoginOpen={isLoginOpen} setIsLoginOpen={setIsLoginOpen} isSignupOpen={isSignupOpen} setIsSignupOpen={setIsSignupOpen}/>}>
-          <Route element={<HomePage setToken={setToken} />} path="/" />
+        <Route element={<HomePage token={token} setIsLoginOpen={setIsLoginOpen} key={reloader} setReloader={ setReloader } />} path="/" />
           <Route element={<QuestionPage token={token} />} path="/question/:pk" /> 
           <Route element={<UserPage token={token} username={username} />} path="/user/:username" />
-          <Route element={<LoginPage setAuth={ setAuth } />} path = "/login" />
-          <Route element={<SignUpPage />} path="/sign-up" />
+          {/* <Route element={<LoginPage setAuth={ setAuth } />} path = "/login" />
+          <Route element={<SignUpPage />} path="/sign-up" /> */}
           <Route element={<Page404 />} path="/*" />
         </Route>
       </Routes></>

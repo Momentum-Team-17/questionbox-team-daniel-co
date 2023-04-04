@@ -2,14 +2,16 @@
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faInbox } from '@fortawesome/free-solid-svg-icons'
 import '../styles/header.css'
-import { Dialog, Transition } from '@headlessui/react'
+import { Dialog, Transition, Popover } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import { faUser, faLock, faAt } from "@fortawesome/free-solid-svg-icons"
 import useLocalStorageState from 'use-local-storage-state'
 import axios from 'axios'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { usePopper } from 'react-popper'
 
-class Input {
+export class Input {
   constructor(label, type, value, onChange, icon) {
     this.label = label
     this.type = type
@@ -23,7 +25,7 @@ class Input {
 export default function Header(props) {
   const [email, setEmail] = useState()
   const [password, setPassword] = useState()
-  const [confirmPassword, setConfirmPassword] = useState()
+  // const [confirmPassword, setConfirmPassword] = useState()
   const [error, setError] = useState()
   const [success, setSuccess] = useState()
   const URL = "https://questionbox-mgxz.onrender.com"
@@ -72,13 +74,13 @@ export default function Header(props) {
     setSuccess(null)
     e.preventDefault()
     console.log(props.token);
+ 
 
-    const headers = {
+    axios.post(`${URL}/auth/token/logout/`, {},
+      { headers : {
         'Content-Type': 'application/json',
         Authorization: `Token ${ props.token }`
-      }
-
-    axios.post(`${URL}/auth/users/me/`, { headers })
+      } })
       .then((res) => {
       props.setToken(null)
       setSuccess(false)
@@ -121,18 +123,10 @@ export default function Header(props) {
           </div>
           {props.token
             ? <>
-              <div className="hidden sm:flex sm:flex-none sm:justify-end mx-4">
-              <button onClick={handleLogout} className="text-sm font-semibold leading-6 text-gray-900">
-                Log Out <span aria-hidden="true">&rarr;</span>
-              </button>
-            </div>
-              <div className="hidden sm:flex sm:flex-none sm:justify-end">
-                <Link to={ `/user/${props.username}`} className="rounded-md bg-black bg-opacity-30 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
-                  <FontAwesomeIcon icon={ faUser } />
-                </Link>
-              </div>
+              <div className="flex flex-none justify-end">
+                <Dropdown username = {props.username} handleLogout={handleLogout} />
+              </div> 
             </>
-            
             :
             <><div className="hidden sm:flex sm:flex-none sm:justify-end mx-4">
               <button onClick={() => props.setIsLoginOpen(true)} className="text-sm font-semibold leading-6 text-gray-900">
@@ -140,7 +134,7 @@ export default function Header(props) {
               </button>
             </div>
               <div className="hidden sm:flex sm:flex-none sm:justify-end">
-                <button onClick={() => props.setIsSignupOpen(true)} className="rounded-md bg-black bg-opacity-30 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+                <button onClick={() => props.setIsSignupOpen(true)} className="rounded-md bg-indigo-700 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
                   Sign-Up <span aria-hidden="true"></span>
                 </button>
               </div>
@@ -226,3 +220,69 @@ export function Modal({fields, isOpen, setIsOpen, error, success}) {
     </>
   )
 }
+
+
+
+
+
+function Dropdown({ username, handleLogout }) {
+  const [referenceElement, setReferenceElement] = useState()
+  const [popperElement, setPopperElement] = useState()
+  const { styles, attributes } = usePopper(referenceElement, popperElement)
+
+  return (
+    <div className=" w-full max-w-sm">
+      <Popover className="">
+        {({ open }) => (
+          <>
+            <Popover.Button
+              ref={ setReferenceElement }
+              className={`
+                ${open ? '' : 'text-opacity-90'}
+                group inline-flex items-center rounded-md bg-indigo-700 hover:text-opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-700 focus-visible:ring-opacity-75`}
+            >
+              <Link to={`/user/${username}`} className="rounded-md bg-indigo-700 pl-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+                  <FontAwesomeIcon icon={ faUser } /> <span className='pl-2'> {username}</span>
+              </Link>
+              <ChevronDownIcon
+                className={`${open ? '' : 'text-opacity-70'}
+                  ml-2 h-5 w-5 text-indigo-300 transition duration-150 ease-in-out group-hover:text-opacity-80 mr-2`}
+                aria-hidden="true"
+              />
+            </Popover.Button>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-200"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition ease-in duration-150"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0 "
+            >
+              <Popover.Panel
+                ref={setPopperElement}
+                style={styles.popper}
+                {...attributes.popper}
+                className="z-10  w-64 px-5 py-2 ">
+                <div className="bg-white overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+                      <div
+                        onClick={handleLogout}
+                        className="m-2 flex items-center justify-between rounded-lg p-2 transition duration-150 ease-in-out hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-indigo-500 focus-visible:ring-opacity-50"
+                      >
+                        <div className="ml-4">
+                          <p className=" text-sm font-medium text-gray-900">
+                            Logout  
+                      </p>
+                        </div>
+                      <div aria-hidden="true" class="text-right">&rarr;</div>
+                  </div>
+                </div>
+              </Popover.Panel>
+            </Transition>
+          </>
+        )}
+      </Popover>
+    </div>
+  )
+}
+
