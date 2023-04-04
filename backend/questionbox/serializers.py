@@ -16,6 +16,7 @@ class AnswerSerializer(serializers.ModelSerializer):
             'text',
             'author',
             'time_created',
+            'is_accepted',
         )
 
         read_only_fields = ('author', 'question')
