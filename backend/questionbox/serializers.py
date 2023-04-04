@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.settings import api_settings
 from django.core.paginator import Paginator
-from .models import User, Question, Answer, StarTracker
+from .models import User, Question, Answer
 
 
 class AnswerSerializer(serializers.ModelSerializer):

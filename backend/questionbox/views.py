@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.core.serializers import serialize
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render, get_object_or_404
-from .models import User, Question, Answer, StarTracker
+from .models import User, Question, Answer
 from .serializers import QuestionSerializer, AnswerSerializer, UserSerializer
 from .permissions import IsAuthor
 
