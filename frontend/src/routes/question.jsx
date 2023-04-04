@@ -5,8 +5,9 @@ import moment from "moment"
 import { useState, useEffect } from "react"
 import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom"
 
-export default function QuestionPage() {
+export default function QuestionPage({ setIsLoginOpen }) {
   const [data, setData] = useState()
+  const [isCreateAnswerOpen, setIsCreateAnswerOpen] = useState(false)
   const {pk} = useParams()
 
   useEffect( () => {
@@ -17,21 +18,31 @@ export default function QuestionPage() {
 
   },[])
   
-  if(data) return (
-    <>
-      <PageHeader data={ data } />
-      <div className="mx-6 grid grid-cols-1 divide-y">
-        {<Question data={data} />}
-        {/* {data.isAccepted && <AcceptedAnswer />} */}
-        {/* {post new answers if logged in } */}
-        <div>
-          <h3 className="text-xl font-bold mt-3">Answers</h3>
-          { data.answers.map((a) => <Answer key={a.pk} data = {a} />) }
+  if (data) {
+    console.log(data);
+    return (
+      <>
+        <PageHeader data={data} />
+        <div className="mx-6 grid grid-cols-1 divide-y">
+          {<Question data={data} />}
+          {/* {data.isAccepted && <AcceptedAnswer />} */}
+          {/* {post new answers if logged in } */}
+          <div>
+            <div className="flex justify-between items-center my-2">
+              <h3 className="text-xl font-bold mt-3">Answers</h3>
+              <button onClick={() => { token ? setIsCreateAnswerOpen(true) : setIsLoginOpen(true)}} type="button" className="inline-flex items-center rounded-md border bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                New Answer
+              </button>
+            </div>
+            {data.answers.length? 
+              data.answers.map((a) => <Answer key={a.pk} data={a} />) :
+              <div className="h-96 flex items-center justify-center"><h1 className="h-64 text-2xl text-center font-bold text-gray-500">No answers!<br />...Yet</h1></div>}
+          </div>
         </div>
-      </div>
-  </>
+      </>
 
-  )
+    )
+  }
 
 }
 
