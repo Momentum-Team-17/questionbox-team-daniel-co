@@ -22,7 +22,7 @@ auth/users/set_password/ ----> POST - changes user password
 
 auth/token/login ---> POST - obtains user authentication token
 
-auth/token/login/ ----> POST - logs out user (removes user authentication token)
+auth/token/logout/ ----> POST - logs out user (removes user authentication token)
 
 
 - Our app's urls:
