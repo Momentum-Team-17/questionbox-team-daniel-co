@@ -14,4 +14,5 @@ urlpatterns = [
     path('answers/favorite', views.favorite_answer),
     path('answers/<int:pk>/accepted', views.AcceptAnswer.as_view()),
     path('users/fav-questions', views.ListFavoriteQuestions.as_view()),
+    path('users/fav-answers', views.ListFavoriteAnswers.as_view()),
 ]

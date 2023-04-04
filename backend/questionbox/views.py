@@ -146,3 +146,13 @@ class ListFavoriteQuestions(generics.ListAPIView):
         user = self.request.user
         queryset = Question.objects.filter(users__id=user.id)
         return queryset
+
+
+class ListFavoriteAnswers(generics.ListAPIView):
+    serializer_class = AnswerSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Answer.objects.filter(users__id=user.id)
+        return queryset
