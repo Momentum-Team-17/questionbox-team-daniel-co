@@ -6,6 +6,7 @@ urlpatterns = [
     path('', views.QuestionList.as_view()),
     path('questions/<int:pk>/answers', views.CreateAnswer.as_view()),
     path('questions/<int:pk>', views.QuestionDetails.as_view()),
+    path('answers/<int:pk>', views.AnswerDetails.as_view()),
     path('users/questions', views.ListUserQuestions.as_view()),
     path('users/answers', views.ListUserAnswers.as_view()),
     path('search', views.QuestionSearch.as_view(), name='question-search'),

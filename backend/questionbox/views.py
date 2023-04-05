@@ -4,6 +4,7 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Q, Count, BooleanField
+from django.contrib.postgres.search import SearchVector
 from django.core.exceptions import PermissionDenied
 from django.core.serializers import serialize
 from django_filters import rest_framework as filters
@@ -94,6 +95,17 @@ class QuestionDetails(generics.RetrieveUpdateDestroyAPIView):
             return [IsAuthenticated(), IsAuthor()]
 
 
+class AnswerDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return []
+        else:
+            return [IsAuthenticated(), IsAuthor()]
+
+
 class QuestionSearch(generics.ListAPIView):
     serializer_class = QuestionSerializer
     model = Question
@@ -102,7 +114,8 @@ class QuestionSearch(generics.ListAPIView):
     def get_queryset(self):
         query = self.request.GET.get('q')
         if query:
-            return Question.objects.filter(text__icontains=query)
+            # return Question.objects.filter(text__icontains=query)
+            return Question.objects.annotate(search=SearchVector("title", "text")).filter(search=query)
         return Question.objects.all()
 
 
