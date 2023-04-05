@@ -190,11 +190,11 @@ export function Modal({fields, isOpen, setIsOpen, error, success}) {
                   <form onSubmit={ (e) => fields.onSubmit(e) }>
                     <div className="mt-2">
                       {fields.inputs.map((field) => {
-                        return (<div class="mb-4" key={ ` ${field.label}div `}>
-                          <label key={field.label} class="block text-gray-700 text-sm font-bold mb-2" for="username">
+                        return (<div className="mb-4" key={ ` ${field.label}div `}>
+                          <label key={field.label} className="block text-gray-700 text-sm font-bold mb-2" for="username">
                             {field.label}
                           </label>
-                          <input key={` ${field.label}inp `} required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={field.value} onChange={(e) => field.onChange(e.target.value)} id={`${field.label}-label`} type={ field.type } placeholder={field.label} />
+                          <input key={` ${field.label}inp `} required className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={field.value} onChange={(e) => field.onChange(e.target.value)} id={`${field.label}-label`} type={ field.type } placeholder={field.label} />
                         </div>)
                       })}
                       {error && Object.keys(error).map((key) => {
@@ -274,7 +274,7 @@ function Dropdown({ username, handleLogout }) {
                             Logout  
                       </p>
                         </div>
-                      <div aria-hidden="true" class="text-right">&rarr;</div>
+                      <div aria-hidden="true" className="text-right">&rarr;</div>
                   </div>
                 </div>
               </Popover.Panel>

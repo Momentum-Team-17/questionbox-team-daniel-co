@@ -79,9 +79,9 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
               <textarea name="answer" id="answer" cols="50" rows="5" placeholder="Write an answer..." required={token?true:false} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={answerText} onChange={(e) => setAnswerText(e.target.value)}/>
           </form>
           <div>
-            <h3 className="text-xl font-bold my-3">{ acceptedPk && "Other "}Answers</h3>
+            <h3 className="text-xl font-bold my-3">Answers</h3>
             {data.answers.length? 
-              data.answers.map((a) => a.pk != acceptedPk.current && <Answer key={a.pk} acceptedPk={acceptedPk} userIsAuthor={ userIsAuthor } token={token} data={a} setReloader={setReloader} />) :
+              data.answers.map((a) => <Answer key={a.pk} acceptedPk={acceptedPk} userIsAuthor={ userIsAuthor } token={token} data={a} setReloader={setReloader} />) :
               <div className="h-96 flex items-center justify-center"><h1 className="h-64 text-2xl text-center font-bold text-gray-500">No answers!<br />...Yet</h1></div>}
           </div>
           
@@ -228,7 +228,7 @@ function Answer({ token, data, setReloader, userIsAuthor, acceptedPk }) {
         }})}
   
   return (
-     <div className="flex items-top justify-between">
+     <div className={`${data['is_accepted'] ? "bg-gray-200 pl-1 " : ""}flex items-top justify-between`}>
       <div className="mr-2 mt-1 flex flex-col align-top">
         {userIsAuthor.current && !acceptedPk.current && <Tooltip content="Mark answer as accepted" placement="right">
           <button
@@ -236,7 +236,7 @@ function Answer({ token, data, setReloader, userIsAuthor, acceptedPk }) {
             type="button"
             className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            <FontAwesomeIcon icon={faCheck} className="" aria-hidden="true" />
+            <FontAwesomeIcon icon={faCheck} className={ data['is_accepted'] ? "text-green-500" : ''} aria-hidden="true" />
           </button>
         </Tooltip>}
         <Tooltip content="Favorite answer" placement="right">
