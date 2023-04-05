@@ -34,7 +34,7 @@ export default function App() {
       <Route element={<Header token={token} username={username} setUsername={ setUsername } setToken={ setToken } errorElement={Page404}
           isLoginOpen={isLoginOpen} setIsLoginOpen={setIsLoginOpen} isSignupOpen={isSignupOpen} setIsSignupOpen={setIsSignupOpen}/>}>
         <Route element={<HomePage token={token} setIsLoginOpen={setIsLoginOpen} key={reloader} setReloader={ setReloader } />} path="/" />
-          <Route element={<QuestionPage token={token} setIsLoginOpen={setIsLoginOpen}/>} path="/question/:pk" /> 
+        <Route element={<QuestionPage key={reloader} token={token} setIsLoginOpen={setIsLoginOpen} setReloader={ setReloader } />} path="/question/:pk" /> 
           <Route element={<UserPage token={token} username={username} />} path="/user/:username" />
           {/* <Route element={<LoginPage setAuth={ setAuth } />} path = "/login" />
           <Route element={<SignUpPage />} path="/sign-up" /> */}
