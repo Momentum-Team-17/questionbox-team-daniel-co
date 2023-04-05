@@ -8,7 +8,6 @@ import { Input } from "../components/header";
 
 export default function QuestionPage({ token, setIsLoginOpen }) {
   const [data, setData] = useState()
-  const [isCreateAnswerOpen, setIsCreateAnswerOpen] = useState(false)
   const [answer, setAnswer] = useState()
   const [error, setError] = useState()
   const { pk } = useParams()
@@ -42,18 +41,21 @@ export default function QuestionPage({ token, setIsLoginOpen }) {
           {/* {data.isAccepted && <AcceptedAnswer />} */}
           {/* {post new answers if logged in } */}
           <div>
-            <div className="flex justify-between items-center my-2">
-              <h3 className="text-xl font-bold mt-3">Answers</h3>
-              <button onClick={() => { token ? setIsCreateAnswerOpen(true) : setIsLoginOpen(true)}} type="button" className="inline-flex items-center rounded-md border bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                New Answer
-              </button>
-            </div>
+            <form onSubmit={() => { token ? handleNewAnswer : setIsLoginOpen(true)}}>
+              <div className="flex justify-between items-center my-2">
+                <h3 className="text-xl font-bold mt-3">Answers</h3>
+                <button type="submit" disabled={ answer ? false : true} className={`${answer ? "bg-indigo-600 hover:bg-indigo-500" : "bg-gray-400"} inline-flex items-center rounded-md border  px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}>
+                  Post Answer
+                </button>
+              </div>
+                <textarea name="answer" id="answer" cols="50" rows="5" placeholder="Write an answer..." required={token?true:false} class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={answer} onChange={(e) => setAnswer(e.target.value)}/>
+            </form>
             {data.answers.length? 
               data.answers.map((a) => <Answer key={a.pk} data={a} />) :
               <div className="h-96 flex items-center justify-center"><h1 className="h-64 text-2xl text-center font-bold text-gray-500">No answers!<br />...Yet</h1></div>}
           </div>
         </div>
-         <Modal fields={createFields} isOpen={isCreateAnswerOpen} setIsOpen={setIsCreateAnswerOpen} error={ error } />
+         {/* <Modal fields={createFields} isOpen={isCreateAnswerOpen} setIsOpen={setIsCreateAnswerOpen} error={ error } /> */}
       </>
 
     )
@@ -147,75 +149,6 @@ function Answer({ data }) {
       </div>
     </div>  
     // select best answer and heart
-  )
-}
-
-function Modal({fields, isOpen, setIsOpen, error}) {
-  return (
-    <>
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={() => setIsOpen(false)}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-gray-900"
-                  >
-                    {fields.title}
-                  </Dialog.Title>
-                  <form onSubmit={ (e) => fields.onSubmit(e) }>
-                    <div className="mt-2">
-                      {fields.inputs.map((field) => {
-                        return (<div class="mb-4" key={` ${field.label}div `}>
-                          <label key={field.label} class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                            {field.label}
-                          </label>
-                          <input key={` ${field.label}inp `} required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={field.value} onChange={(e) => field.onChange(e.target.value)} id={`${field.label}-label`} type={ field.type } placeholder={field.label} />
-                        </div>)
-                      })}
-                      {error && Object.keys(error).map((key) => {
-                        return <h2 key={key}> <span className="capitalize font-bold">{key}: </span>{typeof(error[key]) === 'string' ? error[key] : error[key].join(' ')}</h2>
-                      })}
-                    </div>
-
-                    <div className="mt-4">
-                      <button
-                        type="submit"
-                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                      >
-                        Post
-                      </button>
-                    </div>
-                  </form>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-    </>
   )
 }
 
