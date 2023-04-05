@@ -110,6 +110,7 @@ class UserDetailView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     model = User
     queryset = User.objects.all()
+    lookup_field = 'username'
 
 
 @api_view(['PATCH'])
