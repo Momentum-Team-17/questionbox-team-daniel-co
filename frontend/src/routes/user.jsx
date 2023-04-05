@@ -74,16 +74,14 @@ function UserTab({ data, userIsUser }) {
         {Object.values(tabs).map((panel, idx) =>
           (<Tab.Panel
             key={idx}
-            className={'rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'}>
+            className={'mx-6 rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'}>
             
             {data[panel].map((qOrA) => (
               panel.includes('question') ? 
-                <Question data={qOrA} key={qOrA } /> :
-                <Answer answer = {qOrA['time_created']} />
+                <Question data={qOrA} key={qOrA['time_created'] } /> :
+                <Answer data={ qOrA} key = {qOrA['time_created']} />
             ))}
-            <ul>
-                
-            </ul>
+
           </Tab.Panel>)
         )}
         </Tab.Panels>

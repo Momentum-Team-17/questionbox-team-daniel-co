@@ -7,7 +7,8 @@ import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom"
 import { Input } from "../components/header";
 import Loader from '../components/loader'
 import { Tooltip, Button } from "@material-tailwind/react";
-
+import Question from '../components/question'
+import Answer from "../components/answer"
 
 
 /* TODO:
@@ -88,10 +89,16 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
             </div>
               <textarea name="answer" id="answer" cols="50" rows="5" placeholder="Write an answer..." required={token?true:false} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={answerText} onChange={(e) => setAnswerText(e.target.value)}/>
           </form>
+
+
           <div>
             <h3 className="text-xl font-bold my-3">Answers</h3>
             {data.answers.length? 
-              data.answers.map((a) => <Answer key={a.pk} acceptedPk={acceptedPk} userIsAuthor={ userIsAuthor } token={token} data={a} setReloader={setReloader} />) :
+              data.answers.map((a) => (
+                <Answer key={a.pk}  data={a}>
+                  <FavSelectButtons acceptedPk={acceptedPk} userIsAuthor={userIsAuthor} token={token} data={a} setReloader={setReloader}/>
+                </Answer>)) :
+              
               <div className="h-96 flex items-center justify-center"><h1 className="h-64 text-2xl text-center font-bold text-gray-500">No answers!<br />...Yet</h1></div>}
           </div>
           
@@ -192,4 +199,60 @@ function AcceptedAnswer({ data }) {
 }
 
 
+function FavSelectButtons({token, data, setReloader, userIsAuthor, acceptedPk }) {
+  const handleAccept = () => {
+      const URL = `https://questionbox-mgxz.onrender.com/answers/${data.pk}/accepted`
 
+      axios.patch(URL,
+        { "is_accepted" : true}, 
+        {headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${token}`
+        }
+        }).then((res) => {
+          console.log(res);
+          setReloader(Math.random())
+        }).catch(function (error) {
+          if (error.response) {
+            console.log(error.response.data);
+          }})}
+
+  const handleFavorite = () => { 
+    const URL = "https://questionbox-mgxz.onrender.com/answers/favorite"
+    axios.patch(URL,
+      { "answer_pk": data.pk }, 
+      {headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`
+      }
+      }).then((res) => {
+        console.log(res);
+        setReloader(Math.random())
+      }).catch(function (error) {
+        if (error.response) {
+          console.log(error.response.data);
+        }})}
+
+  return(
+  <div className="mr-2 mt-1 flex flex-col align-top">
+        {userIsAuthor.current && !acceptedPk.current && <Tooltip content="Mark answer as accepted" placement="right">
+          <button
+            onClick={handleAccept}
+            type="button"
+            className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            <FontAwesomeIcon icon={faCheck} className={ data['is_accepted'] ? "text-green-500" : ''} aria-hidden="true" />
+          </button>
+        </Tooltip>}
+        <Tooltip content="Favorite answer" placement="right">
+          <button
+            onClick={handleFavorite}
+            type="button"
+            className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            {/* Make red if favorited */}
+            <FontAwesomeIcon icon={faHeart} className="" aria-hidden="true" />
+          </button>
+        </Tooltip>
+      </div> )
+}

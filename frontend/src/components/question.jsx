@@ -1,4 +1,5 @@
-
+import { Link } from "react-router-dom";
+import moment from "moment";
 
 
 export default function Question({data}) {
