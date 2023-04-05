@@ -26,7 +26,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     answers = serializers.SerializerMethodField('paginated_answers')
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username')
-    accepted_answer = serializers.PrimaryKeyRelatedField(
+    accepted_answer = AnswerSerializer(
         read_only=True, many=False
     )
 
