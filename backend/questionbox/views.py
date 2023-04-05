@@ -4,10 +4,11 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Q
+from django.core.exceptions import PermissionDenied
 from django.core.serializers import serialize
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render, get_object_or_404
-from .models import User, Question, Answer, StarTracker
+from .models import User, Question, Answer
 from .serializers import QuestionSerializer, AnswerSerializer, UserSerializer
 from .permissions import IsAuthor
 
@@ -120,3 +121,38 @@ def favorite_answer(request):
     favorite_answers = serialize('json', request.user.fav_answers.all())
     favorite_answers = json.loads(favorite_answers)
     return Response(favorite_answers)
+
+
+class AcceptAnswer(generics.UpdateAPIView):
+    serializer_class = AnswerSerializer
+    queryset = Answer.objects.all()
+
+    def get_object(self):
+        answer = super().get_object()
+
+        if self.request.user != answer.question.author:
+            raise PermissionDenied()
+        return answer
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+
+class ListFavoriteQuestions(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Question.objects.filter(users__id=user.id)
+        return queryset
+
+
+class ListFavoriteAnswers(generics.ListAPIView):
+    serializer_class = AnswerSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Answer.objects.filter(users__id=user.id)
+        return queryset

@@ -16,8 +16,6 @@ class Question(models.Model):
     author = models.ForeignKey(
         to='User', on_delete=models.CASCADE, related_name='user_questions')
     time_created = models.DateTimeField(auto_now_add=True)
-    # accepted_answer = models.OneToOneField(
-    #     to='Answer', on_delete=models.CASCADE, blank=True, null=True, related_name='accepted_for')
 
     class Meta:
         ordering = ['-time_created']
@@ -56,14 +54,3 @@ class Answer(models.Model):
 
     def __str__(self):
         return f'{self.question} answer by {self.author}'
-
-
-class StarTracker(models.Model):
-    star = models.BooleanField(default=False)
-    user = models.ForeignKey(to='User', on_delete=models.CASCADE)
-    question = models.ForeignKey(to='Question', on_delete=models.CASCADE)
-    answer = models.ForeignKey(to='Answer', on_delete=models.CASCADE)
-
-    class Meta:
-        models.UniqueConstraint(
-            fields=['user', 'question', 'answer'], name='tracker_constraint')

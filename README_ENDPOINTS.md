@@ -45,3 +45,8 @@ questions/favorite ----> PATCH - adds (favorites) or removes (un-favorites) ques
 
 answers/favorite ----> PATCH - adds (favorites) or removes (un-favorites) an answer from user's fav_answers (the request requires and answer pk) -- <answer_pk:pk>
  
+answers/<int:pk>/accepted ----> PATCH - allows the author of a question to mark a related answer as 'accepted' (actually allows this user to PATCH any field of the answer, but we only want this endpoint for marking 'is_accepted')
+
+users/fav-questions ----> GET - lists current logged-in user's favorite questions
+
+users/fav-answers ----> GET - lists current loggen-in user's favorite answers
