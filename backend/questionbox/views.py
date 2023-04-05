@@ -95,6 +95,17 @@ class QuestionDetails(generics.RetrieveUpdateDestroyAPIView):
             return [IsAuthenticated(), IsAuthor()]
 
 
+class AnswerDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return []
+        else:
+            return [IsAuthenticated(), IsAuthor()]
+
+
 class QuestionSearch(generics.ListAPIView):
     serializer_class = QuestionSerializer
     model = Question

@@ -35,6 +35,8 @@ questions/<int:pk>/answers ----> POST - CreateAnswer view - aunthenticated user 
 
 questions/<int:pk> ----> GET | PUT | PATCH | DELETE - QuestionDetail view - authenticated user can see details + answers to a question; author of that question can update/delete
 
+answers/<int:pk> ----> GET | PUT | PATCH | DELETE - AnswerDetail view - authenticated user can see details to an answer; author of that answer can update/delete
+
 users/questions ----> GET - shows list of qeustions created by the current user
 
 users/answers ----> GET - shows list of answers created by the current user
