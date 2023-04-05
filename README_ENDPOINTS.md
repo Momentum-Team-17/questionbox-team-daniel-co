@@ -43,7 +43,7 @@ users/answers ----> GET - shows list of answers created by the current user
 
 search ----> GET - search the text field of Questions
 
-profile/<int:pk> ----> GET - shows user details with details of their authored questions and answers
+profile/<slug:username> ----> GET - shows user details with details of their authored questions and answers
 
 questions/favorite ----> PATCH - adds (favorites) or removes (un-favorites) question from user's fav_questions (the request requires a question_pk) -- <question_pk:pk>
 

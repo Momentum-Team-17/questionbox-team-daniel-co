@@ -245,7 +245,7 @@ function Dropdown({ username, handleLogout }) {
                   <FontAwesomeIcon icon={ faUser } /> <span className='pl-2'> {username}</span>
               </Link>
               <ChevronDownIcon
-                className={`${open ? '' : 'text-opacity-70'}
+                className={`${open ? '' : 'text-opacity-100'}
                   ml-2 h-5 w-5 text-indigo-300 transition duration-150 ease-in-out group-hover:text-opacity-80 mr-2`}
                 aria-hidden="true"
               />
