@@ -26,6 +26,9 @@ class QuestionSerializer(serializers.ModelSerializer):
     answers = serializers.SerializerMethodField('paginated_answers')
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username')
+    accepted_answer = AnswerSerializer(
+        read_only=True, many=False
+    )
 
     class Meta:
         model = Question
@@ -36,6 +39,7 @@ class QuestionSerializer(serializers.ModelSerializer):
             'author',
             'time_created',
             'answers',
+            'accepted_answer',
         )
 
         read_only_fields = ('author',)
