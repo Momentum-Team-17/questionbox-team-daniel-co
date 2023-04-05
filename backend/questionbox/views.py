@@ -18,7 +18,7 @@ class QuestionList(generics.ListCreateAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['author']
+    filterset_fields = ['author', 'accepted_answer']
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
