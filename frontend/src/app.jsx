@@ -12,7 +12,7 @@ import useLocalStorageState from 'use-local-storage-state'
 import axios from 'axios'
 import Page404 from './routes/404'
 
-
+//TODO: 🌶️ Login signup redirects to home w open modal
 
 export default function App() {
   const [token, setToken] = useLocalStorageState('token', { defaultValue:null})
@@ -33,12 +33,12 @@ export default function App() {
     <><Routes>
       <Route element={<Header token={token} username={username} setUsername={ setUsername } setToken={ setToken } errorElement={Page404}
           isLoginOpen={isLoginOpen} setIsLoginOpen={setIsLoginOpen} isSignupOpen={isSignupOpen} setIsSignupOpen={setIsSignupOpen}/>}>
-        <Route element={<HomePage token={token} setIsLoginOpen={setIsLoginOpen} key={reloader} setReloader={ setReloader } />} path="/" />
-        <Route element={<QuestionPage key={reloader} username={username} token={token} setIsLoginOpen={setIsLoginOpen} setReloader={ setReloader } />} path="/question/:pk" /> 
-          <Route element={<UserPage token={token} username={username} />} path="/user/:username" />
+        <Route element={<HomePage token={token} setIsLoginOpen={setIsLoginOpen} key={reloader} setReloader={ setReloader } errorElement={Page404}/>} path="/" />
+        <Route element={<QuestionPage key={reloader} username={username} token={token} setIsLoginOpen={setIsLoginOpen} setReloader={ setReloader } errorElement={Page404} />} path="/question/:pk" /> 
+        <Route element={<UserPage key={reloader} username={username} token={token} setIsLoginOpen={setIsLoginOpen} setReloader={setReloader} errorElement={Page404} />} path="/user/:username" />
           {/* <Route element={<LoginPage setAuth={ setAuth } />} path = "/login" />
           <Route element={<SignUpPage />} path="/sign-up" /> */}
-          <Route element={<Page404 />} path="/*" />
+        <Route element={<Page404 />} path="/*" />
         </Route>
       </Routes></>
   )

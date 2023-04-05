@@ -7,7 +7,8 @@ import { useParams } from "react-router-dom"
 
 export default function UserPage(params) {
   const [data, setData] = useState()
-  const username = useParams()
+  const {username} = useParams()
+  console.log(username);
   useEffect(() => {
     const URL = 'https://questionbox-mgxz.onrender.com'
     axios.get(`${URL}/auth/users/${username}`).then((res) => {
