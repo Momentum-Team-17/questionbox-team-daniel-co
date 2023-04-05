@@ -8,6 +8,8 @@ import { Input } from "../components/header";
 import Loader from '../components/loader'
 import { Tooltip, Button } from "@material-tailwind/react";
 
+
+
 /* TODO:
   Add heart for question (necessary)
 
@@ -113,14 +115,14 @@ function PageHeader({data}) {
 
   return (
     <div className="">
-      <div className="mx-6 mt-6 flex items-center justify-between">
+      <div className="mx-6 flex items-center justify-between">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:tracking-tight">
             {data.title}
           </h2>
         </div>
         
-        <div className="flex">
+        {/* <div className="flex">
           {data.pk > 1 && <span className=" mr-1">
             <button
               onClick={handleBack}
@@ -130,7 +132,6 @@ function PageHeader({data}) {
               Previous
             </button>
           </span>}
-          {/* conditionally render if not no next */}
           {true && <span className="">
             <button
               onClick={handleNext}
@@ -141,22 +142,12 @@ function PageHeader({data}) {
               <FontAwesomeIcon icon={faCaretRight} className="ml-1 mr-0 h-5 w-5" aria-hidden="true" />
             </button>
           </span>}
-        </div>
+        </div> */}
       </div>
     </div>
   )
 }
 
-function Question({data}) {
-  return (
-    <div className="">
-      <div className="min-w-0 flex-1">
-        <p className="text-sm mt-1"><Link to={`/user/${data.author}`} className="my-1 font-medium text-violet-600 dark:text-violet-300 hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()} - {pluralize(data.answers.length, "answer")}</p>
-        <p className="text-md mt-1 mb-6">{ data.text }</p>
-      </div>
-    </div>  
-  )
-}
 
 function AcceptedAnswer({ data }) {
   const handleFavorite = () => { 
@@ -200,74 +191,5 @@ function AcceptedAnswer({ data }) {
   )
 }
 
-
-function Answer({ token, data, setReloader, userIsAuthor, acceptedPk }) {
-    const handleAccept = () => {
-    const URL = `https://questionbox-mgxz.onrender.com/answers/${data.pk}/accepted`
-
-    axios.patch(URL,
-      { "is_accepted" : true}, 
-      {headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`
-      }
-      }).then((res) => {
-        console.log(res);
-        setReloader(Math.random())
-      }).catch(function (error) {
-        if (error.response) {
-          console.log(error.response.data);
-        }})}
-
-  const handleFavorite = () => { 
-    const URL = "https://questionbox-mgxz.onrender.com/answers/favorite"
-    axios.patch(URL,
-      { "answer_pk": data.pk }, 
-      {headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`
-      }
-      }).then((res) => {
-        console.log(res);
-        setReloader(Math.random())
-      }).catch(function (error) {
-        if (error.response) {
-          console.log(error.response.data);
-        }})}
-  
-  return (
-     <div className={`${data['is_accepted'] ? "bg-gray-200 pl-1 " : ""}flex items-top justify-between`}>
-      <div className="mr-2 mt-1 flex flex-col align-top">
-        {userIsAuthor.current && !acceptedPk.current && <Tooltip content="Mark answer as accepted" placement="right">
-          <button
-            onClick={handleAccept}
-            type="button"
-            className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            <FontAwesomeIcon icon={faCheck} className={ data['is_accepted'] ? "text-green-500" : ''} aria-hidden="true" />
-          </button>
-        </Tooltip>}
-        <Tooltip content="Favorite answer" placement="right">
-          <button
-            onClick={handleFavorite}
-            type="button"
-            className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            {/* Make red if favorited */}
-            <FontAwesomeIcon icon={faHeart} className="" aria-hidden="true" />
-          </button>
-        </Tooltip>
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-sm mt-1"><Link to={`/user/${data.author}`} className="my-1 font-medium text-violet-600 dark:text-violet-300 hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()}</p>
-        <p className="text-md mt-1 mb-6">{ data.text }</p>
-      </div>
-    </div>  
-  )
-}
-
-
-const pluralize = (count, noun, suffix = 's') =>
-  `${count} ${noun}${count !== 1 ? suffix : ''}`;
 
 

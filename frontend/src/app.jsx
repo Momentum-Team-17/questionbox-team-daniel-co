@@ -7,7 +7,7 @@ import LoginPage from './routes/login'
 import SignUpPage from './routes/signup'
 import UserPage from './routes/user'
 import Header from './components/header'
-import QuestionPage from './routes/question'
+import QuestionPage from './routes/questiondetails'
 import useLocalStorageState from 'use-local-storage-state'
 import axios from 'axios'
 import Page404 from './routes/404'
@@ -35,7 +35,7 @@ export default function App() {
           isLoginOpen={isLoginOpen} setIsLoginOpen={setIsLoginOpen} isSignupOpen={isSignupOpen} setIsSignupOpen={setIsSignupOpen}/>}>
         <Route element={<HomePage token={token} setIsLoginOpen={setIsLoginOpen} key={reloader} setReloader={ setReloader } errorElement={Page404}/>} path="/" />
         <Route element={<QuestionPage key={reloader} username={username} token={token} setIsLoginOpen={setIsLoginOpen} setReloader={ setReloader } errorElement={Page404} />} path="/question/:pk" /> 
-        <Route element={<UserPage key={reloader} username={username} token={token} setIsLoginOpen={setIsLoginOpen} setReloader={setReloader} errorElement={Page404} />} path="/user/:username" />
+        <Route element={<UserPage key={reloader} username={username} token={token} setIsLoginOpen={setIsLoginOpen} setReloader={setReloader} errorElement={Page404} />} path="/user/:user" />
           {/* <Route element={<LoginPage setAuth={ setAuth } />} path = "/login" />
           <Route element={<SignUpPage />} path="/sign-up" /> */}
         <Route element={<Page404 />} path="/*" />
