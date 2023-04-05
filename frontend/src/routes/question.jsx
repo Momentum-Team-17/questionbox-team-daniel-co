@@ -8,6 +8,14 @@ import { Input } from "../components/header";
 import Loader from '../components/loader'
 import { Tooltip, Button } from "@material-tailwind/react";
 
+/* TODO:
+  Add heart for question (necessary)
+
+  Spicy:
+    Make hearts red if fave (backend too)
+    Edit questions
+  */
+
 export default function QuestionPage({ token, setIsLoginOpen, setReloader, username}) {
   const [data, setData] = useState()
   const [answerText, setAnswerText] = useState()
