@@ -8,6 +8,7 @@ import moment from 'moment'
 import axios from "axios";
 import { Input } from "../components/header";
 import { Dialog } from '@headlessui/react'
+import Loader from '../components/loader'
 
 export default function HomePage(props) {
   const [data, setData] = useState()
@@ -37,9 +38,7 @@ export default function HomePage(props) {
 
   function handleNewQuestion(e){
     setError(null)
-    e.preventDefault()
-    console.log(props.token);
- 
+    e.preventDefault() 
 
     axios.post(`${URL}/`,
       {
@@ -70,6 +69,7 @@ export default function HomePage(props) {
   </>
 
   )
+  return <Loader/>
 }
 
 
@@ -139,7 +139,7 @@ function Question({ data }) {
 
 
 
-export function Modal({fields, isOpen, setIsOpen, error}) {
+function Modal({fields, isOpen, setIsOpen, error}) {
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>

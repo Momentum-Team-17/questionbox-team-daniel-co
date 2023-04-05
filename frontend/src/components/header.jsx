@@ -190,7 +190,7 @@ export function Modal({fields, isOpen, setIsOpen, error, success}) {
                   <form onSubmit={ (e) => fields.onSubmit(e) }>
                     <div className="mt-2">
                       {fields.inputs.map((field) => {
-                        return(<div class="mb-4">
+                        return (<div class="mb-4" key={ ` ${field.label}div `}>
                           <label key={field.label} class="block text-gray-700 text-sm font-bold mb-2" for="username">
                             {field.label}
                           </label>
@@ -198,7 +198,7 @@ export function Modal({fields, isOpen, setIsOpen, error, success}) {
                         </div>)
                       })}
                       {error && Object.keys(error).map((key) => {
-                        return <h2 key={key}> <span className="capitalize font-bold">{key}: </span>{typeof(error[key]) === 'string' ? error[key] : error[key].join(' ')}</h2>
+                        return <h2 key={error[key]}> <span className="capitalize font-bold">{key}: </span>{typeof(error[key]) === 'string' ? error[key] : error[key].join(' ')}</h2>
                       })}
                     </div>
 
