@@ -1,5 +1,7 @@
 Endpoints:
 
+Deployed Render url - https://questionbox-mgxz.onrender.com
+
 - Below are Djoser endpoints with a link to the Djoser docs. You likely will not need many of these, but we wanted to provide them just in case.
   
 'api-auth/' ----> Adds "Login" button to pages
@@ -50,3 +52,7 @@ answers/<int:pk>/accepted ----> PATCH - allows the author of a question to mark 
 users/fav-questions ----> GET - lists current logged-in user's favorite questions
 
 users/fav-answers ----> GET - lists current loggen-in user's favorite answers
+
+questions/answered ----> GET - lists questions that have an accepted answer
+
+questions/unanswered ----> GET - lists questions that do not have an accepted answer

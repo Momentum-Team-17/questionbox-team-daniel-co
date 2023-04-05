@@ -3,9 +3,10 @@ from rest_framework import generics, filters
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Q
+from django.db.models import Q, Count, BooleanField
 from django.core.exceptions import PermissionDenied
 from django.core.serializers import serialize
+from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import render, get_object_or_404
 from .models import User, Question, Answer
@@ -20,6 +21,10 @@ class QuestionList(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['author']
 
+    # def get_queryset(self):
+    #     return Question.objects.prefetch_related('answers').annotate(
+    #         has_accepted_answer=Count('answers__is_accepted'))
+
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
@@ -28,6 +33,24 @@ class QuestionList(generics.ListCreateAPIView):
             return []
         else:
             return [IsAuthenticated()]
+
+
+class AnsweredQuestions(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+
+    def get_queryset(self):
+        queryset = Question.objects.prefetch_related('answers')
+        queryset = queryset.filter(answers__is_accepted=True).distinct()
+        return queryset
+
+
+class UnansweredQuestions(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+
+    def get_queryset(self):
+        queryset = Question.objects.prefetch_related('answers')
+        queryset = queryset.filter(answers__is_accepted=False).distinct()
+        return queryset
 
 
 class ListUserQuestions(generics.ListAPIView):
