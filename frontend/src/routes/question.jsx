@@ -5,11 +5,12 @@ import moment from "moment"
 import { useState, useEffect } from "react"
 import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom"
 import { Input } from "../components/header";
+import Loader from '../components/loader'
+import { Tooltip, Button } from "@material-tailwind/react";
 
-export default function QuestionPage({ token, setIsLoginOpen }) {
+export default function QuestionPage({ token, setIsLoginOpen, setReloader }) {
   const [data, setData] = useState()
-  const [answer, setAnswer] = useState()
-  const [error, setError] = useState()
+  const [answerText, setAnswerText] = useState()
   const { pk } = useParams()
   
 
@@ -22,17 +23,31 @@ export default function QuestionPage({ token, setIsLoginOpen }) {
   }, [])
   
   const handleNewAnswer = (e) => {
-    
+    const URL = 'https://questionbox-mgxz.onrender.com'
+
+    setError(null)
+    e.preventDefault() 
+
+
+    axios.post(`${URL}/questions/${data.pk}/answers`,
+      {
+        "text": answerText,
+      },
+      { headers : {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${ token }`
+      } })
+      .then((res) => {
+        setReloader(Math.random())
+      }).catch(function (error) {
+        if (error.response) {
+          console.log(error.response.data);
+        }
+      })
   }
-  
-  const createFields = {
-    title: "New Answer",
-    inputs: [new Input("Answer", "text", answer, setAnswer, null),],
-    onSubmit: handleNewAnswer
-  }
+
   
   if (data) {
-    console.log(data);
     return (
       <>
         <PageHeader data={data} />
@@ -40,26 +55,31 @@ export default function QuestionPage({ token, setIsLoginOpen }) {
           {<Question data={data} />}
           {/* {data.isAccepted && <AcceptedAnswer />} */}
           {/* {post new answers if logged in } */}
+          
+          <form className="mb-2" onSubmit={(e) => { token ? handleNewAnswer(e) : setIsLoginOpen(true)}}>
+            <div className="flex justify-between items-center my-2">
+              <h3 className="text-xl font-bold mt-3">Post Answer</h3>
+              <button type="submit" disabled={ answerText ? false : true} className={`${answerText ? "bg-indigo-600 hover:bg-indigo-500" : "bg-gray-400"} inline-flex items-center rounded-md border  px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}>
+                Submit
+              </button>
+            </div>
+              <textarea name="answer" id="answer" cols="50" rows="5" placeholder="Write an answer..." required={token?true:false} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={answerText} onChange={(e) => setAnswerText(e.target.value)}/>
+          </form>
           <div>
-            <form onSubmit={() => { token ? handleNewAnswer : setIsLoginOpen(true)}}>
-              <div className="flex justify-between items-center my-2">
-                <h3 className="text-xl font-bold mt-3">Answers</h3>
-                <button type="submit" disabled={ answer ? false : true} className={`${answer ? "bg-indigo-600 hover:bg-indigo-500" : "bg-gray-400"} inline-flex items-center rounded-md border  px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}>
-                  Post Answer
-                </button>
-              </div>
-                <textarea name="answer" id="answer" cols="50" rows="5" placeholder="Write an answer..." required={token?true:false} class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={answer} onChange={(e) => setAnswer(e.target.value)}/>
-            </form>
+            <h3 className="text-xl font-bold my-3">Answers</h3>
             {data.answers.length? 
-              data.answers.map((a) => <Answer key={a.pk} data={a} />) :
+              data.answers.map((a) => <Answer key={a.pk} token={token} data={a} setReloader={setReloader} />) :
               <div className="h-96 flex items-center justify-center"><h1 className="h-64 text-2xl text-center font-bold text-gray-500">No answers!<br />...Yet</h1></div>}
           </div>
+          
         </div>
          {/* <Modal fields={createFields} isOpen={isCreateAnswerOpen} setIsOpen={setIsCreateAnswerOpen} error={ error } /> */}
       </>
 
     )
   }
+  
+  return <Loader />
 
 }
 
@@ -118,30 +138,49 @@ function Question({data}) {
 }
 
 
-function Answer({ data }) {
-  const handleAccept = () => {}
-  const handleFavorite = () => { }
+function Answer({ token, data, setReloader }) {
+  const handleAccept = () => { }
+  
+
+  const handleFavorite = () => { 
+    const URL = "https://questionbox-mgxz.onrender.com/answers/favorite"
+    axios.patch(URL,
+      { "answer_pk": data.pk }, 
+      {headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`
+      }
+      }).then((res) => {
+        console.log(res);
+        setReloader(Math.random())
+      }).catch(function (error) {
+        if (error.response) {
+          console.log(error.response.data);
+        }})}
   
   return (
      <div className="flex items-top justify-between">
       <div className="mr-2 mt-1 flex flex-col align-top">
         {/* show if logged in user = user */}
-        <button
-          onClick={handleAccept}
-          type="button"
-          className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          <FontAwesomeIcon icon={faCheck} className="" aria-hidden="true" />
-        </button>
-        
-        <button
-          onClick={handleFavorite}
-          type="button"
-          className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          {/* Make red if favorited */}
-          <FontAwesomeIcon icon={faHeart} className="" aria-hidden="true" />
-        </button>
+        <Tooltip content="Mark answer as accepted" placement="right">
+          <button
+            onClick={handleAccept}
+            type="button"
+            className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            <FontAwesomeIcon icon={faCheck} className="" aria-hidden="true" />
+          </button>
+        </Tooltip>
+        <Tooltip content="Favorite answer" placement="right">
+          <button
+            onClick={handleFavorite}
+            type="button"
+            className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            {/* Make red if favorited */}
+            <FontAwesomeIcon icon={faHeart} className="" aria-hidden="true" />
+          </button>
+        </Tooltip>
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-sm mt-1"><Link to={`/user/${data.author}`} className="my-1 font-medium text-violet-600 dark:text-violet-300 hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()}</p>
