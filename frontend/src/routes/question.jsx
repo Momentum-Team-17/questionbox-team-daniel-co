@@ -2,15 +2,16 @@ import { faArrowRight, faCaretLeft, faCaretRight, faCheck, faHeart, faPlus, faQu
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import axios from "axios"
 import moment from "moment"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom"
 import { Input } from "../components/header";
 import Loader from '../components/loader'
 import { Tooltip, Button } from "@material-tailwind/react";
 
-export default function QuestionPage({ token, setIsLoginOpen, setReloader }) {
+export default function QuestionPage({ token, setIsLoginOpen, setReloader, username}) {
   const [data, setData] = useState()
   const [answerText, setAnswerText] = useState()
+  const userIsAuthor = useRef()
   const { pk } = useParams()
   
 
@@ -18,14 +19,13 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader }) {
     const URL = 'https://questionbox-mgxz.onrender.com'
     axios.get(`${URL}/questions/${pk}`).then((res) => {
       setData(res.data)
+      userIsAuthor.current = username === res.data.author
     })
 
   }, [])
   
   const handleNewAnswer = (e) => {
     const URL = 'https://questionbox-mgxz.onrender.com'
-
-    setError(null)
     e.preventDefault() 
 
 
@@ -68,7 +68,7 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader }) {
           <div>
             <h3 className="text-xl font-bold my-3">Answers</h3>
             {data.answers.length? 
-              data.answers.map((a) => <Answer key={a.pk} token={token} data={a} setReloader={setReloader} />) :
+              data.answers.map((a) => <Answer key={a.pk} userIsAuthor={ userIsAuthor } token={token} data={a} setReloader={setReloader} />) :
               <div className="h-96 flex items-center justify-center"><h1 className="h-64 text-2xl text-center font-bold text-gray-500">No answers!<br />...Yet</h1></div>}
           </div>
           
@@ -138,9 +138,8 @@ function Question({data}) {
 }
 
 
-function Answer({ token, data, setReloader }) {
-  const handleAccept = () => { }
-  
+function Answer({ token, data, setReloader, userIsAuthor }) {
+
 
   const handleFavorite = () => { 
     const URL = "https://questionbox-mgxz.onrender.com/answers/favorite"
@@ -161,8 +160,7 @@ function Answer({ token, data, setReloader }) {
   return (
      <div className="flex items-top justify-between">
       <div className="mr-2 mt-1 flex flex-col align-top">
-        {/* show if logged in user = user */}
-        <Tooltip content="Mark answer as accepted" placement="right">
+        {userIsAuthor.current && <Tooltip content="Mark answer as accepted" placement="right">
           <button
             onClick={handleAccept}
             type="button"
@@ -170,7 +168,7 @@ function Answer({ token, data, setReloader }) {
           >
             <FontAwesomeIcon icon={faCheck} className="" aria-hidden="true" />
           </button>
-        </Tooltip>
+        </Tooltip>}
         <Tooltip content="Favorite answer" placement="right">
           <button
             onClick={handleFavorite}
