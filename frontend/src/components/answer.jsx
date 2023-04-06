@@ -1,12 +1,9 @@
-
 import moment from "moment"
 import { Link } from "react-router-dom"
 
 
-
 export default function Answer(props) {
   const data = props.data
-  
   return (
      <div className={`${data['is_accepted'] ? "bg-gray-200 pl-1 " : ""}flex items-top justify-between`}>
       {props.children}

@@ -15,7 +15,13 @@ export default function UserPage(props) {
   const userIsUser = useRef()
   useEffect(() => {
     const URL = 'https://questionbox-mgxz.onrender.com'
-    axios.get(`${URL}/profile/${user}`).then((res) => {
+    axios.get(`${URL}/profile/${user}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${props.token}`
+      }
+    }).then((res) => {
       userIsUser.current = user === props.username
       setData(res.data)
     })
