@@ -175,7 +175,7 @@ class ListFavoriteQuestions(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = Question.objects.filter(users__id=user.id)
+        queryset = Question.objects.filter(fav_users__id=user.id)
         return queryset
 
 
@@ -185,5 +185,5 @@ class ListFavoriteAnswers(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = Answer.objects.filter(users__id=user.id)
+        queryset = Answer.objects.filter(fav_users__id=user.id)
         return queryset
