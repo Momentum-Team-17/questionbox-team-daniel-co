@@ -58,3 +58,5 @@ users/fav-answers ----> GET - lists current loggen-in user's favorite answers
 questions/answered ----> GET - lists questions that have an accepted answer
 
 questions/unanswered ----> GET - lists questions that do not have an accepted answer
+
+profile/<slug:username> ----> GET - shows details for one user
