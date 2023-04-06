@@ -43,7 +43,7 @@ users/questions ----> GET - shows list of qeustions created by the current user
 
 users/answers ----> GET - shows list of answers created by the current user
 
-search ----> GET - search the text field of Questions
+search?q=your-query ----> GET - search the text field of Questions
 
 profile/<slug:username> ----> GET - shows user details with details of their authored questions and answers
 
