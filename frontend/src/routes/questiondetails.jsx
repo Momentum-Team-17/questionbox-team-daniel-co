@@ -1,16 +1,15 @@
-import { faArrowRight, faCaretLeft, faCaretRight, faCheck, faHeart, faPlus, faQuestion } from "@fortawesome/free-solid-svg-icons"
+import { faHeart } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import axios from "axios"
 import moment from "moment"
 import { useState, useEffect, useRef } from "react"
-import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom"
-import { Input } from "../components/header";
+import { Link, useNavigate, useParams } from "react-router-dom"
 import Loader from '../components/loader'
-import { Tooltip, Button } from "@material-tailwind/react";
+import { Tooltip } from "@material-tailwind/react";
 import Question from '../components/question'
 import Answer from "../components/answer"
-
-
+import AcceptButton from "../components/acceptbutton"
+import FavButton from "../components/favbutton"
 /* TODO:
   Add heart for question (necessary)
 
@@ -23,16 +22,20 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
   const [data, setData] = useState()
   const [answerText, setAnswerText] = useState()
   const userIsAuthor = useRef()
-  const acceptedPk = useRef(false)
   const { pk } = useParams()
 
   
 
   useEffect( () => {
     const URL = 'https://questionbox-mgxz.onrender.com'
-    axios.get(`${URL}/questions/${pk}`).then((res) => {
+    axios.get(`${URL}/questions/${pk}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`
+      }
+    }).then((res) => {
       userIsAuthor.current = username === res.data.author
-      findAccepted(res.data)
       setData(res.data)
     })
 
@@ -59,27 +62,19 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
         }
       })
   }
-
-  function findAccepted(data) {
-    console.log(data);
-     data.answers.map((ans) => {
-      if (ans['is_accepted']) {
-        acceptedPk.current = ans.pk
-      }
-    })
-    console.log(acceptedPk.current);
-    console.log(data.answers.filter((a) => a.pk === acceptedPk.current)[0]);
-  }
   
   if (data) {
     return (
       <>
-        <PageHeader data={data} />
+        <div className="mx-6 flex items-center justify-start space-x-2">
+          <FavButton token={token} data={data} setReloader={setReloader}/>
+          <QuestionTitle data={data} />
+        </div>
         <div className="mx-6 grid grid-cols-1 divide-y">
-          {<Question data={data} />}
-          {acceptedPk.current && <AcceptedAnswer data={data.answers.filter((a) => a.pk === acceptedPk.current)[0]} />}
+          <Question data={data} />
 
-          
+          {data.accepted_answer && <AcceptedAnswer  data={data.accepted_answer}  token={token}  setReloader={setReloader} />}
+          {/* component this out */}
           <form className="mb-2" onSubmit={(e) => { token ? handleNewAnswer(e) : setIsLoginOpen(true)}}>
             <div className="flex justify-between items-center my-2">
               <h3 className="text-xl font-bold mt-3">Post Answer</h3>
@@ -95,8 +90,11 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
             <h3 className="text-xl font-bold my-3">Answers</h3>
             {data.answers.length? 
               data.answers.map((a) => (
-                <Answer key={a.pk}  data={a}>
-                  <FavSelectButtons acceptedPk={acceptedPk} userIsAuthor={userIsAuthor} token={token} data={a} setReloader={setReloader}/>
+                <Answer key={a.pk} data={a}>
+                  <div className="mr-2 mt-1 flex flex-col align-top">
+                    {!data.accepted_answer && <AcceptButton userIsAuthor={userIsAuthor} token={token} data={a} setReloader={setReloader}/>}
+                    <FavButton token={token} data={a} setReloader={setReloader} />
+                  </div>
                 </Answer>)) :
               
               <div className="h-96 flex items-center justify-center"><h1 className="h-64 text-2xl text-center font-bold text-gray-500">No answers!<br />...Yet</h1></div>}
@@ -112,8 +110,9 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
   return <Loader />
 
 }
+ 
 
-function PageHeader({data}) {
+function QuestionTitle({data}) {
   //https://tailwindui.com/components/application-ui/headings/page-headings
   const navigate = useNavigate()
 
@@ -121,15 +120,38 @@ function PageHeader({data}) {
   const handleBack = () => navigate(`/question/${data.pk - 1}`)
 
   return (
-    <div className="">
-      <div className="mx-6 flex items-center justify-between">
+
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:tracking-tight">
             {data.title}
           </h2>
+          {/* <BackNext /> */}
         </div>
         
-        {/* <div className="flex">
+  )
+}
+
+
+function AcceptedAnswer({ data, token, setReloader }) {
+
+  return (
+  <div>
+    <h3 className="text-xl font-bold mt-3">Best Answer</h3>
+    <div className="flex items-top justify-between">
+      <div className="mr-2 mt-1 flex flex-col align-top">
+        <FavButton token={token} data={data} setReloader={setReloader} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-sm mt-1"><Link to={`/user/${data.author}`} className="my-1 font-medium text-violet-600 dark:text-violet-300 hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()}</p>
+        <p className="text-md mt-1 mb-6">{ data.text }</p>
+      </div>
+    </div>  
+  </div>
+  )
+}
+
+function BackNext() {
+  {/* <div className="flex">
           {data.pk > 1 && <span className=" mr-1">
             <button
               onClick={handleBack}
@@ -149,110 +171,6 @@ function PageHeader({data}) {
               <FontAwesomeIcon icon={faCaretRight} className="ml-1 mr-0 h-5 w-5" aria-hidden="true" />
             </button>
           </span>}
-        </div> */}
-      </div>
-    </div>
-  )
-}
-
-
-function AcceptedAnswer({ data }) {
-  const handleFavorite = () => { 
-    const URL = "https://questionbox-mgxz.onrender.com/answers/favorite"
-    axios.patch(URL,
-      { "answer_pk": data.pk }, 
-      {headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`
-      }
-      }).then((res) => {
-        console.log(res);
-        setReloader(Math.random())
-      }).catch(function (error) {
-        if (error.response) {
-          console.log(error.response.data);
-        }})}
-
-  return (
-  <div>
-    <h3 className="text-xl font-bold mt-3">Best Answer</h3>
-    <div className="flex items-top justify-between">
-      <div className="mr-2 mt-1 flex flex-col align-top">
-        <Tooltip content="Favorite answer" placement="right">
-          <button
-            onClick={handleFavorite}
-            type="button"
-            className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            {/* Make red if favorited */}
-            <FontAwesomeIcon icon={faHeart} className="" aria-hidden="true" />
-          </button>
-        </Tooltip>
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-sm mt-1"><Link to={`/user/${data.author}`} className="my-1 font-medium text-violet-600 dark:text-violet-300 hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()}</p>
-        <p className="text-md mt-1 mb-6">{ data.text }</p>
-      </div>
-    </div>  
-  </div>
-  )
-}
-
-
-function FavSelectButtons({token, data, setReloader, userIsAuthor, acceptedPk }) {
-  const handleAccept = () => {
-      const URL = `https://questionbox-mgxz.onrender.com/answers/${data.pk}/accepted`
-
-      axios.patch(URL,
-        { "is_accepted" : true}, 
-        {headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Token ${token}`
-        }
-        }).then((res) => {
-          console.log(res);
-          setReloader(Math.random())
-        }).catch(function (error) {
-          if (error.response) {
-            console.log(error.response.data);
-          }})}
-
-  const handleFavorite = () => { 
-    const URL = "https://questionbox-mgxz.onrender.com/answers/favorite"
-    axios.patch(URL,
-      { "answer_pk": data.pk }, 
-      {headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`
-      }
-      }).then((res) => {
-        console.log(res);
-        setReloader(Math.random())
-      }).catch(function (error) {
-        if (error.response) {
-          console.log(error.response.data);
-        }})}
-
-  return(
-  <div className="mr-2 mt-1 flex flex-col align-top">
-        {userIsAuthor.current && !acceptedPk.current && <Tooltip content="Mark answer as accepted" placement="right">
-          <button
-            onClick={handleAccept}
-            type="button"
-            className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            <FontAwesomeIcon icon={faCheck} className={ data['is_accepted'] ? "text-green-500" : ''} aria-hidden="true" />
-          </button>
-        </Tooltip>}
-        <Tooltip content="Favorite answer" placement="right">
-          <button
-            onClick={handleFavorite}
-            type="button"
-            className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            {/* Make red if favorited */}
-            <FontAwesomeIcon icon={faHeart} className="" aria-hidden="true" />
-          </button>
-        </Tooltip>
-      </div> )
+        </div> 
+*/}
 }
