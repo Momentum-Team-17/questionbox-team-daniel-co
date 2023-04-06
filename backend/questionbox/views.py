@@ -54,14 +54,13 @@ class UnansweredQuestions(generics.ListAPIView):
         return queryset
 
 
-class ListUserQuestions(generics.ListAPIView):
+class CreateQuestion(generics.CreateAPIView):
+    queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        user = self.request.user
-        queryset = Question.objects.filter(author__id=user.id)
-        return queryset
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 
 class CreateAnswer(generics.CreateAPIView):
@@ -72,6 +71,16 @@ class CreateAnswer(generics.CreateAPIView):
     def perform_create(self, serializer):
         question = get_object_or_404(Question, pk=self.kwargs["pk"])
         serializer.save(author=self.request.user, question=question)
+
+
+class ListUserQuestions(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Question.objects.filter(author__id=user.id)
+        return queryset
 
 
 class ListUserAnswers(generics.ListAPIView):
