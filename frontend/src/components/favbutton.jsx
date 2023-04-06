@@ -11,13 +11,16 @@ export default function FavButton({token, data, setReloader}) {
 
   const handleFavorite = () => { 
     let URL
+    let key
     if (data.answers) {
       URL = "https://questionbox-mgxz.onrender.com/questions/favorite"
+      key="question_pk"
     } else {
       URL = "https://questionbox-mgxz.onrender.com/answers/favorite" 
+      key="answer_pk"
     }
     axios.patch(URL,
-      { "answer_pk": data.pk }, 
+      { [key]: data.pk }, 
       {headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${token}`
