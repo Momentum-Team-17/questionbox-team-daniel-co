@@ -9,21 +9,28 @@ import axios from "axios";
 import { Input } from "../components/header";
 import { Dialog } from '@headlessui/react'
 import Loader from '../components/loader'
+import FavButton from "../components/favbutton";
 
 export default function HomePage(props) {
   const [data, setData] = useState()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [error, setError] = useState(false)
-  const [title, setTitle] = useState(null)
-  const [text, setText] = useState(null)
-  const [search, setSearch] = useState(null)
+  const [title, setTitle] = useState("")
+  const [text, setText] = useState("")
+  const [search, setSearch] = useState("")
 
   const navigate = useNavigate()
   const URL = 'https://questionbox-mgxz.onrender.com'
 
 
   useEffect( () => {
-    axios.get(URL).then((res) => {
+    axios.get(URL,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${props.token}`
+      }
+      }).then((res) => {
       setData(res.data)
     })
 
@@ -59,12 +66,27 @@ export default function HomePage(props) {
       })
   }
 
+  const handleSearch = () => {
+    axios.get(`${URL}/search?q=${search}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${props.token}`
+      }
+    }).then((res) => {
+      setData(res.data)
+    })
+  }
+
   if (data) return (
   <>
-      <PageHeader token={props.token} setIsCreateOpen={setIsCreateOpen} setIsLoginOpen={props.setIsLoginOpen} />
-      <div className="mx-6 my-3 grid grid-cols-1 divide-y">
-        {data.results.map((q) => <Question data={q} key={q.pk} search={search} setSearch={ setSearch } />)}
-      </div>
+      <PageHeader token={props.token} handleSearch={handleSearch} setIsCreateOpen={setIsCreateOpen} setIsLoginOpen={props.setIsLoginOpen} search={search} setSearch={ setSearch }/>
+      {data.results.length ?
+        <div className="mx-6 my-3 grid grid-cols-1 divide-y">
+          {data.results.map((q) => <Question data={q} token={props.token} setReloader={props.setReloader}  key={q.pk}  />)}
+        </div> :
+        <div className="h-96 flex items-center justify-center"><h1 className="text-2xl">No results</h1></div>
+      }
       <Modal fields={createFields} isOpen={isCreateOpen} setIsOpen={setIsCreateOpen} error={ error } />
   </>
 
@@ -73,7 +95,7 @@ export default function HomePage(props) {
 }
 
 
-function PageHeader({ token, setIsCreateOpen, setIsLoginOpen }) {
+function PageHeader({ token, setIsCreateOpen, setIsLoginOpen, search, setSearch, handleSearch }) {
   //https://tailwindui.com/components/application-ui/headings/page-headings
   return (
   <div className="">
@@ -95,8 +117,11 @@ function PageHeader({ token, setIsCreateOpen, setIsLoginOpen }) {
         <div className="flex flex-auto items-center justify-end ml-4 mt-auto">
           <span className="flex-auto flex justify-end">
               <div className="relative">
-                <input type="search" id="search-dropdown" className=" block p-2 w-5/6 z-20 text-sm font-semibold text-gray-900 bg-white rounded-lg border box-border border-gray-30 " placeholder="Search" sm:placeholder="Search questions" required />
-                <button type="submit" className="absolute top-0 right-0 p-2 text-sm font-medium text-white bg-indigo-600 rounded-r-lg border box-border border-indigo-700 hover:bg-indigo-500 focus:outline-none focus:ring-blue-300  ">
+                <input value={search} onChange={(e) => setSearch(e.target.value)} 
+                type="search" id="search-dropdown"
+                className=" block p-2 w-5/6 z-20 text-sm font-semibold text-gray-900 bg-white rounded-lg border box-border border-gray-30 "
+                placeholder="Search" sm:placeholder="Search questions" required />
+                <button onClick={handleSearch} className="absolute top-0 right-0 p-2 text-sm font-medium text-white bg-indigo-600 rounded-r-lg border box-border border-indigo-700 hover:bg-indigo-500 focus:outline-none focus:ring-blue-300  ">
                     <svg aria-hidden="true" className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     <span className="sr-only">Search</span>
                 </button>
@@ -120,14 +145,16 @@ function PageHeader({ token, setIsCreateOpen, setIsLoginOpen }) {
   )
 }
 
-function Question({ data }) {
+function Question({ data, token, setReloader }) {
   
   const pluralize = (count, noun, suffix = 's') =>
   `${count} ${noun}${count !== 1 ? suffix : ''}`;
 
   return (
     <div>
-      <h3 className="mt-1"><Link to={`/question/${data.pk}`} className="text-lg font-bold text-violet-800  hover:underline">{ data.title }</Link></h3>
+      <h3 className="mt-1">
+        <FavButton token={token} data={data} setReloader={setReloader}/>
+        <Link to={`/question/${data.pk}`} className="ml-1 text-lg font-bold text-violet-800  hover:underline">{data.title}</Link></h3>
       <p className="text-sm"><Link to={`/user/${data.author}`} className="my-1 font-medium text-violet-600  hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()} - {pluralize(data.answers.length, "answer")}</p>
       <p className="text-md my-1">{ data.text }</p>
       <p className="text-sm mb-3"><Link to={`/questions/${data.pk}`} className="mt-1 mb-1 font-medium text-violet-600 hover:underline"></Link></p>

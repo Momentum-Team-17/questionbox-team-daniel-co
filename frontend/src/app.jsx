@@ -31,7 +31,7 @@ export default function App() {
 
   return (
     <><Routes>
-      <Route element={<Header token={token} username={username} setUsername={ setUsername } setToken={ setToken } errorElement={Page404}
+      <Route element={<Header token={token} username={username} setReloader={setReloader} setUsername={ setUsername } setToken={ setToken } errorElement={Page404}
           isLoginOpen={isLoginOpen} setIsLoginOpen={setIsLoginOpen} isSignupOpen={isSignupOpen} setIsSignupOpen={setIsSignupOpen}/>}>
         <Route element={<HomePage token={token} setIsLoginOpen={setIsLoginOpen} key={reloader} setReloader={ setReloader } errorElement={Page404}/>} path="/" />
         <Route element={<QuestionPage key={reloader} username={username} token={token} setIsLoginOpen={setIsLoginOpen} setReloader={ setReloader } errorElement={Page404} />} path="/question/:pk" /> 

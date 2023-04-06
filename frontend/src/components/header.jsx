@@ -69,6 +69,7 @@ export default function Header(props) {
       }
     })
   }
+
   const handleLogout = (e) => {
     setError(null)
     setSuccess(null)
@@ -115,7 +116,7 @@ export default function Header(props) {
       <header className="bg-white">
         <nav className="mx-6 flex items-center justify-between py-6" aria-label="Global">
           <div className="flex sm:flex-1">
-            <Link to="/" className="-m-1.5 p-1.5 grow">
+            <Link to="/" onClick={() => props.setReloader(Math.random())} className="-m-1.5 p-1.5 grow">
               <h1 className='title font-bold text-2xl'>
               <FontAwesomeIcon icon={faInbox} />
                &nbsp;QuestionBox</h1>
