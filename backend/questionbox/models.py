@@ -5,9 +5,9 @@ from django.db.models.constraints import UniqueConstraint
 
 class User(AbstractUser):
     fav_questions = models.ManyToManyField(
-        to='Question', related_name='users', blank=True, null=True)
+        to='Question', related_name='fav_users', blank=True, null=True)
     fav_answers = models.ManyToManyField(
-        to='Answer', related_name='users', blank=True, null=True)
+        to='Answer', related_name='fav_users', blank=True, null=True)
 
 
 class Question(models.Model):
