@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework.settings import api_settings
 from django.core.paginator import Paginator
 from .models import User, Question, Answer
 
@@ -28,10 +27,15 @@ class AnswerSerializer(serializers.ModelSerializer):
             if self.context['request'].user.is_authenticated:
                 return answer.fav_users.filter(
                     pk=self.context['request'].user.pk).exists()
+        except AttributeError:
+            return False
         except KeyError:
-            if self.context['parent']['request'].user.is_authenticated:
-                return answer.fav_users.filter(
-                    pk=self.context['parent']['request'].user.pk).exists()
+            try:
+                if self.context['parent']['request'].user.is_authenticated:
+                    return answer.fav_users.filter(
+                        pk=self.context['parent']['request'].user.pk).exists()
+            except AttributeError:
+                return False
         return False
 
 
@@ -68,9 +72,12 @@ class QuestionSerializer(serializers.ModelSerializer):
         return serializer.data
 
     def get_is_favorite(self, question):
-        if self.context['request'].user.is_authenticated:
-            return question.fav_users.filter(
-                pk=self.context['request'].user.pk).exists()
+        try:
+            if self.context['request'].user.is_authenticated:
+                return question.fav_users.filter(
+                    pk=self.context['request'].user.pk).exists()
+        except AttributeError:
+            return False
         return False
 
 

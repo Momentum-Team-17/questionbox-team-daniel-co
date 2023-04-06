@@ -1,13 +1,11 @@
 import json
-from rest_framework import generics, filters
+from rest_framework import generics
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Q, Count, BooleanField
 from django.contrib.postgres.search import SearchVector
 from django.core.exceptions import PermissionDenied
 from django.core.serializers import serialize
-from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from .models import User, Question, Answer
@@ -46,7 +44,7 @@ class UnansweredQuestions(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = Question.objects.prefetch_related('answers')
-        queryset = queryset.filter(answers__is_accepted=False).distinct()
+        queryset = queryset.exclude(answers__is_accepted=True)
         return queryset
 
 
