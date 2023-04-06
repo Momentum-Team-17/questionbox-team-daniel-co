@@ -1,6 +1,11 @@
+import { faCheck } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import axios from "axios"
+import { Tooltip } from "@material-tailwind/react";
 
 
-export default function AcceptButton({token, data, setReloader, userIsAuthor, acceptedPk }) {
+
+export default function AcceptButton({token, data, setReloader, userIsAuthor }) {
   const handleAccept = () => {
       const URL = `https://questionbox-mgxz.onrender.com/answers/${data.pk}/accepted`
 
@@ -22,7 +27,7 @@ export default function AcceptButton({token, data, setReloader, userIsAuthor, ac
   
   return (
     <>
-      {userIsAuthor.current && !acceptedPk.current && <Tooltip content="Mark answer as accepted" placement="right">
+      {userIsAuthor.current && !data.accepted_answer && <Tooltip content="Mark answer as accepted" placement="right">
         <button
           onClick={handleAccept}
           type="button"
