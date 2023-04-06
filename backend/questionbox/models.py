@@ -54,5 +54,5 @@ class Answer(models.Model):
         ]
 
     def __str__(self):
-        # return f'{self.question} answer by {self.author}'
         return str(self.pk)
+        # return f'{self.question} answer by {self.author}'
