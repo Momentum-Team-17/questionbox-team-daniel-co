@@ -7,6 +7,17 @@ import { Link, useLoaderData, useNavigate, useParams } from "react-router-dom"
 import { Input } from "../components/header";
 import Loader from '../components/loader'
 import { Tooltip, Button } from "@material-tailwind/react";
+import Question from '../components/question'
+import Answer from "../components/answer"
+
+
+/* TODO:
+  Add heart for question (necessary)
+
+  Spicy:
+    Make hearts red if fave (backend too)
+    Edit questions
+  */
 
 export default function QuestionPage({ token, setIsLoginOpen, setReloader, username}) {
   const [data, setData] = useState()
@@ -78,10 +89,16 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
             </div>
               <textarea name="answer" id="answer" cols="50" rows="5" placeholder="Write an answer..." required={token?true:false} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={answerText} onChange={(e) => setAnswerText(e.target.value)}/>
           </form>
+
+
           <div>
             <h3 className="text-xl font-bold my-3">Answers</h3>
             {data.answers.length? 
-              data.answers.map((a) => <Answer key={a.pk} acceptedPk={acceptedPk} userIsAuthor={ userIsAuthor } token={token} data={a} setReloader={setReloader} />) :
+              data.answers.map((a) => (
+                <Answer key={a.pk}  data={a}>
+                  <FavSelectButtons acceptedPk={acceptedPk} userIsAuthor={userIsAuthor} token={token} data={a} setReloader={setReloader}/>
+                </Answer>)) :
+              
               <div className="h-96 flex items-center justify-center"><h1 className="h-64 text-2xl text-center font-bold text-gray-500">No answers!<br />...Yet</h1></div>}
           </div>
           
@@ -105,14 +122,14 @@ function PageHeader({data}) {
 
   return (
     <div className="">
-      <div className="mx-6 mt-6 flex items-center justify-between">
+      <div className="mx-6 flex items-center justify-between">
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:tracking-tight">
             {data.title}
           </h2>
         </div>
         
-        <div className="flex">
+        {/* <div className="flex">
           {data.pk > 1 && <span className=" mr-1">
             <button
               onClick={handleBack}
@@ -122,7 +139,6 @@ function PageHeader({data}) {
               Previous
             </button>
           </span>}
-          {/* conditionally render if not no next */}
           {true && <span className="">
             <button
               onClick={handleNext}
@@ -133,22 +149,12 @@ function PageHeader({data}) {
               <FontAwesomeIcon icon={faCaretRight} className="ml-1 mr-0 h-5 w-5" aria-hidden="true" />
             </button>
           </span>}
-        </div>
+        </div> */}
       </div>
     </div>
   )
 }
 
-function Question({data}) {
-  return (
-    <div className="">
-      <div className="min-w-0 flex-1">
-        <p className="text-sm mt-1"><Link to={`/user/${data.author}`} className="my-1 font-medium text-violet-600 dark:text-violet-300 hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()} - {pluralize(data.answers.length, "answer")}</p>
-        <p className="text-md mt-1 mb-6">{ data.text }</p>
-      </div>
-    </div>  
-  )
-}
 
 function AcceptedAnswer({ data }) {
   const handleFavorite = () => { 
@@ -193,23 +199,23 @@ function AcceptedAnswer({ data }) {
 }
 
 
-function Answer({ token, data, setReloader, userIsAuthor, acceptedPk }) {
-    const handleAccept = () => {
-    const URL = `https://questionbox-mgxz.onrender.com/answers/${data.pk}/accepted`
+function FavSelectButtons({token, data, setReloader, userIsAuthor, acceptedPk }) {
+  const handleAccept = () => {
+      const URL = `https://questionbox-mgxz.onrender.com/answers/${data.pk}/accepted`
 
-    axios.patch(URL,
-      { "is_accepted" : true}, 
-      {headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`
-      }
-      }).then((res) => {
-        console.log(res);
-        setReloader(Math.random())
-      }).catch(function (error) {
-        if (error.response) {
-          console.log(error.response.data);
-        }})}
+      axios.patch(URL,
+        { "is_accepted" : true}, 
+        {headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${token}`
+        }
+        }).then((res) => {
+          console.log(res);
+          setReloader(Math.random())
+        }).catch(function (error) {
+          if (error.response) {
+            console.log(error.response.data);
+          }})}
 
   const handleFavorite = () => { 
     const URL = "https://questionbox-mgxz.onrender.com/answers/favorite"
@@ -226,10 +232,9 @@ function Answer({ token, data, setReloader, userIsAuthor, acceptedPk }) {
         if (error.response) {
           console.log(error.response.data);
         }})}
-  
-  return (
-     <div className={`${data['is_accepted'] ? "bg-gray-200 pl-1 " : ""}flex items-top justify-between`}>
-      <div className="mr-2 mt-1 flex flex-col align-top">
+
+  return(
+  <div className="mr-2 mt-1 flex flex-col align-top">
         {userIsAuthor.current && !acceptedPk.current && <Tooltip content="Mark answer as accepted" placement="right">
           <button
             onClick={handleAccept}
@@ -249,17 +254,5 @@ function Answer({ token, data, setReloader, userIsAuthor, acceptedPk }) {
             <FontAwesomeIcon icon={faHeart} className="" aria-hidden="true" />
           </button>
         </Tooltip>
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-sm mt-1"><Link to={`/user/${data.author}`} className="my-1 font-medium text-violet-600 dark:text-violet-300 hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()}</p>
-        <p className="text-md mt-1 mb-6">{ data.text }</p>
-      </div>
-    </div>  
-  )
+      </div> )
 }
-
-
-const pluralize = (count, noun, suffix = 's') =>
-  `${count} ${noun}${count !== 1 ? suffix : ''}`;
-
-
