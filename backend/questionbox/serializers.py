@@ -7,6 +7,7 @@ from .models import User, Question, Answer
 class AnswerSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username')
+    is_favorite = serializers.SerializerMethodField()
 
     class Meta:
         model = Answer
@@ -17,9 +18,21 @@ class AnswerSerializer(serializers.ModelSerializer):
             'author',
             'time_created',
             'is_accepted',
+            'is_favorite'
         )
 
         read_only_fields = ('author', 'question')
+
+    def get_is_favorite(self, answer):
+        try:
+            if self.context['request'].user.is_authenticated:
+                return answer.fav_users.filter(
+                    pk=self.context['request'].user.pk).exists()
+        except KeyError:
+            if self.context['parent']['request'].user.is_authenticated:
+                return answer.fav_users.filter(
+                    pk=self.context['parent']['request'].user.pk).exists()
+        return False
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -50,12 +63,13 @@ class QuestionSerializer(serializers.ModelSerializer):
         page_size = 10
         paginator = Paginator(obj.answers.all(), page_size)
         answers = paginator.page(1)
-        serializer = AnswerSerializer(answers, many=True)
+        serializer = AnswerSerializer(
+            answers, many=True,  context={'parent': self.context})
         return serializer.data
 
     def get_is_favorite(self, question):
         if self.context['request'].user.is_authenticated:
-            return question.users.filter(
+            return question.fav_users.filter(
                 pk=self.context['request'].user.pk).exists()
         return False
 
