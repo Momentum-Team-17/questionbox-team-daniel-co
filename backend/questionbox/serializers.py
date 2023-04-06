@@ -29,6 +29,7 @@ class QuestionSerializer(serializers.ModelSerializer):
     accepted_answer = AnswerSerializer(
         read_only=True, many=False
     )
+    is_favorite = serializers.SerializerMethodField()
 
     class Meta:
         model = Question
@@ -40,6 +41,7 @@ class QuestionSerializer(serializers.ModelSerializer):
             'time_created',
             'answers',
             'accepted_answer',
+            'is_favorite',
         )
 
         read_only_fields = ('author',)
@@ -50,6 +52,12 @@ class QuestionSerializer(serializers.ModelSerializer):
         answers = paginator.page(1)
         serializer = AnswerSerializer(answers, many=True)
         return serializer.data
+
+    def get_is_favorite(self, question):
+        if self.context['request'].user.is_authenticated:
+            return question.users.filter(
+                pk=self.context['request'].user.pk).exists()
+        return False
 
 
 class UserSerializer(serializers.ModelSerializer):
