@@ -9,7 +9,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.serializers import serialize
 from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from .models import User, Question, Answer
 from .serializers import QuestionSerializer, AnswerSerializer, UserSerializer
 from .permissions import IsAuthor
@@ -21,10 +21,6 @@ class QuestionList(generics.ListCreateAPIView):
     serializer_class = QuestionSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['author']
-
-    # def get_queryset(self):
-    #     return Question.objects.prefetch_related('answers').annotate(
-    #         has_accepted_answer=Count('answers__is_accepted'))
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -52,15 +48,6 @@ class UnansweredQuestions(generics.ListAPIView):
         queryset = Question.objects.prefetch_related('answers')
         queryset = queryset.filter(answers__is_accepted=False).distinct()
         return queryset
-
-
-class CreateQuestion(generics.CreateAPIView):
-    queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
 
 
 class CreateAnswer(generics.CreateAPIView):

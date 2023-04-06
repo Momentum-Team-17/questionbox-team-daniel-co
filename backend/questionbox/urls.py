@@ -3,14 +3,15 @@ from questionbox import views
 
 
 urlpatterns = [
-    # GET
+    # GET | POST
     path('', views.QuestionList.as_view()),
+
+    # GET
     path('questions/answered', views.AnsweredQuestions.as_view()),
     path('questions/unanswered', views.UnansweredQuestions.as_view()),
     path('search', views.QuestionSearch.as_view(), name='question-search'),
 
     # POST
-    path('questions', views.CreateQuestion.as_view()),
     path('questions/<int:pk>/answers', views.CreateAnswer.as_view()),
 
     # PATCH
