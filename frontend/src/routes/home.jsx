@@ -23,13 +23,18 @@ export default function HomePage(props) {
   const URL = 'https://questionbox-mgxz.onrender.com'
 
 
-  useEffect( () => {
-    axios.get(URL,
-    {
-      headers: {
+  useEffect(() => {
+    let authT = null
+    if (props.token) {
+      authT = {headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${props.token}`
-      }
+      }}
+    }
+
+    axios.get(URL,
+    {
+      authT
       }).then((res) => {
       setData(res.data)
     })
