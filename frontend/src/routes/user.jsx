@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom"
 import Loader from "../components/loader"
 import Question from '../components/question'
 import Answer from "../components/answer"
-
+import { Link } from "react-router-dom"
 
 
 export default function UserPage(props) {
@@ -84,7 +84,10 @@ function UserTab({ data, userIsUser }) {
             
             {data[panel].map((qOrA) => (
               panel.includes('question') ? 
-                <Question data={qOrA} key={qOrA['time_created'] } /> :
+                <>
+                  <h3><Link to={`/question/${qOrA.pk}`} className="text-lg font-bold text-violet-800  hover:underline">{qOrA.title}</Link></h3>
+                  <Question data={qOrA} key={qOrA['time_created']} />
+                </> :
                 <Answer data={ qOrA} key = {qOrA['time_created']} />
             ))}
 
