@@ -31,6 +31,8 @@ auth/token/logout/ ----> POST - logs out user (removes user authentication token
 
 '' (homepage) ----> GET | POST - QuestionList - anyone can see list of questions; authenticated user can post a question
 
+questions ----> POST - CreateQuestion view - authenticated user can post a question
+
 questions/<int:pk>/answers ----> POST - CreateAnswer view - aunthenticated user can post an answer
 
 questions/<int:pk> ----> GET | PUT | PATCH | DELETE - QuestionDetail view - authenticated user can see details + answers to a question; author of that question can update/delete
@@ -58,3 +60,5 @@ users/fav-answers ----> GET - lists current loggen-in user's favorite answers
 questions/answered ----> GET - lists questions that have an accepted answer
 
 questions/unanswered ----> GET - lists questions that do not have an accepted answer
+
+profile/<slug:username> ----> GET - shows details for one user

@@ -1,15 +1,13 @@
 import json
-from rest_framework import generics, filters
+from rest_framework import generics
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Q, Count, BooleanField
 from django.contrib.postgres.search import SearchVector
 from django.core.exceptions import PermissionDenied
 from django.core.serializers import serialize
-from django_filters import rest_framework as filters
 from django_filters.rest_framework import DjangoFilterBackend
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from .models import User, Question, Answer
 from .serializers import QuestionSerializer, AnswerSerializer, UserSerializer
 from .permissions import IsAuthor
@@ -21,10 +19,6 @@ class QuestionList(generics.ListCreateAPIView):
     serializer_class = QuestionSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['author']
-
-    # def get_queryset(self):
-    #     return Question.objects.prefetch_related('answers').annotate(
-    #         has_accepted_answer=Count('answers__is_accepted'))
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -50,17 +44,7 @@ class UnansweredQuestions(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = Question.objects.prefetch_related('answers')
-        queryset = queryset.filter(answers__is_accepted=False).distinct()
-        return queryset
-
-
-class ListUserQuestions(generics.ListAPIView):
-    serializer_class = QuestionSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        queryset = Question.objects.filter(author__id=user.id)
+        queryset = queryset.exclude(answers__is_accepted=True)
         return queryset
 
 
@@ -72,6 +56,16 @@ class CreateAnswer(generics.CreateAPIView):
     def perform_create(self, serializer):
         question = get_object_or_404(Question, pk=self.kwargs["pk"])
         serializer.save(author=self.request.user, question=question)
+
+
+class ListUserQuestions(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Question.objects.filter(author__id=user.id)
+        return queryset
 
 
 class ListUserAnswers(generics.ListAPIView):
