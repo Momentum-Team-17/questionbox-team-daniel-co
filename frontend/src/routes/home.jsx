@@ -3,7 +3,7 @@ import { Fragment, useEffect, useRef, useState } from 'react'
 import { ChevronDownIcon} from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faQuestion, faUser, faLock } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faQuestion, faUser, faLock, faCheck } from "@fortawesome/free-solid-svg-icons";
 import moment from 'moment'
 import axios from "axios";
 import { Input } from "../components/header";
@@ -18,24 +18,29 @@ export default function HomePage(props) {
   const [title, setTitle] = useState("")
   const [text, setText] = useState("")
   const [search, setSearch] = useState("")
-
+  const [filter, setFilter] = useState('unanswered')
   const navigate = useNavigate()
   const URL = 'https://questionbox-mgxz.onrender.com'
 
 
-  useEffect( () => {
-    axios.get(URL,
-    {
-      headers: {
+  useEffect(() => {
+    let authT = null
+    if (props.token) {
+      authT = {headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${props.token}`
-      }
+      }}
+    }
+
+    axios.get(`${URL}/questions/${filter}`,
+    {
+      authT
       }).then((res) => {
       setData(res.data)
     })
 
-  }, [])
-  
+  }, [filter])
+
   const createFields = {
     title: "New Question",
     inputs: [new Input("Title", "text", title, setTitle, null),
@@ -80,7 +85,7 @@ export default function HomePage(props) {
 
   if (data) return (
   <>
-      <PageHeader token={props.token} handleSearch={handleSearch} setIsCreateOpen={setIsCreateOpen} setIsLoginOpen={props.setIsLoginOpen} search={search} setSearch={ setSearch }/>
+      <PageHeader filter={filter} setFilter={setFilter} token={props.token} handleSearch={handleSearch} setIsCreateOpen={setIsCreateOpen} setIsLoginOpen={props.setIsLoginOpen} search={search} setSearch={ setSearch }/>
       {data.results.length ?
         <div className="mx-6 my-3 grid grid-cols-1 divide-y">
           {data.results.map((q) => <Question data={q} token={props.token} setReloader={props.setReloader}  key={q.pk}  />)}
@@ -95,7 +100,7 @@ export default function HomePage(props) {
 }
 
 
-function PageHeader({ token, setIsCreateOpen, setIsLoginOpen, search, setSearch, handleSearch }) {
+function PageHeader({ filter, setFilter, token, setIsCreateOpen, setIsLoginOpen, search, setSearch, handleSearch }) {
   //https://tailwindui.com/components/application-ui/headings/page-headings
   return (
   <div className="">
@@ -105,11 +110,11 @@ function PageHeader({ token, setIsCreateOpen, setIsLoginOpen, search, setSearch,
           
         </h2> 
           <span className="block  mr-3">
-            <button
+            <button onClick={() => setFilter(filter === "answered" ? "unanswered" : "answered")}
               type="button"
               className="inline-flex border items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50">
-              <FontAwesomeIcon icon={faQuestion} className="-ml-0.5 mr-1.5" aria-hidden="true" />
-              Unanswered
+              <FontAwesomeIcon icon={filter === "unanswered"? faQuestion : faCheck} className="-ml-0.5 mr-1.5" aria-hidden="true" />
+              {filter.charAt(0).toUpperCase() + filter.substring(1) }
             </button>
           </span>
         </div>

@@ -28,13 +28,18 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
 
   useEffect( () => {
     const URL = 'https://questionbox-mgxz.onrender.com'
+    let authT = null
+    if (props.token) {
+      authT = {headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${props.token}`
+      }}
+    }
+
     axios.get(`${URL}/questions/${pk}`,
     {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`
-      }
-    }).then((res) => {
+      authT
+      }).then((res) => {
       userIsAuthor.current = username === res.data.author
       setData(res.data)
     })
