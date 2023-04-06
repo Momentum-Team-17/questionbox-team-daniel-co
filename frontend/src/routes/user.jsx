@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom"
 import Loader from "../components/loader"
 import Question from '../components/question'
 import Answer from "../components/answer"
-
+import { Link } from "react-router-dom"
 
 
 export default function UserPage(props) {
@@ -15,13 +15,18 @@ export default function UserPage(props) {
   const userIsUser = useRef()
   useEffect(() => {
     const URL = 'https://questionbox-mgxz.onrender.com'
-    axios.get(`${URL}/profile/${user}`,
-    {
-      headers: {
+    let authT = null
+    if (props.token) {
+      authT = {headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${props.token}`
-      }
-    }).then((res) => {
+      }}
+    }
+
+    axios.get(`${URL}/profile/${user}`,
+    {
+      authT
+      }).then((res) => {
       userIsUser.current = user === props.username
       setData(res.data)
     })
@@ -84,7 +89,10 @@ function UserTab({ data, userIsUser }) {
             
             {data[panel].map((qOrA) => (
               panel.includes('question') ? 
-                <Question data={qOrA} key={qOrA['time_created'] } /> :
+                <>
+                  <h3><Link to={`/question/${qOrA.pk}`} className="text-lg font-bold text-violet-800  hover:underline">{qOrA.title}</Link></h3>
+                  <Question data={qOrA} key={qOrA['time_created']} />
+                </> :
                 <Answer data={ qOrA} key = {qOrA['time_created']} />
             ))}
 

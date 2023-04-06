@@ -28,13 +28,18 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
 
   useEffect( () => {
     const URL = 'https://questionbox-mgxz.onrender.com'
+    let authT = null
+    if (props.token) {
+      authT = {headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${props.token}`
+      }}
+    }
+
     axios.get(`${URL}/questions/${pk}`,
     {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`
-      }
-    }).then((res) => {
+      authT
+      }).then((res) => {
       userIsAuthor.current = username === res.data.author
       setData(res.data)
     })
@@ -67,7 +72,7 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
     return (
       <>
         <div className="mx-6 flex items-center justify-start space-x-2">
-          <FavButton token={token} data={data} setReloader={setReloader}/>
+          {token && <FavButton token={token} data={data} setReloader={setReloader}/>}
           <QuestionTitle data={data} />
         </div>
         <div className="mx-6 grid grid-cols-1 divide-y">
@@ -93,7 +98,7 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
                 <Answer key={a.pk} data={a}>
                   <div className="mr-2 mt-1 flex flex-col align-top">
                     {!data.accepted_answer && <AcceptButton userIsAuthor={userIsAuthor} token={token} data={a} setReloader={setReloader}/>}
-                    <FavButton token={token} data={a} setReloader={setReloader} />
+                    {token && <FavButton token={token} data={a} setReloader={setReloader} />}
                   </div>
                 </Answer>)) :
               
@@ -139,7 +144,7 @@ function AcceptedAnswer({ data, token, setReloader }) {
     <h3 className="text-xl font-bold mt-3">Best Answer</h3>
     <div className="flex items-top justify-between">
       <div className="mr-2 mt-1 flex flex-col align-top">
-        <FavButton token={token} data={data} setReloader={setReloader} />
+          {token && <FavButton token={token} data={data} setReloader={setReloader} />}
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-sm mt-1"><Link to={`/user/${data.author}`} className="my-1 font-medium text-violet-600 dark:text-violet-300 hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()}</p>
