@@ -10,7 +10,12 @@ import { Tooltip } from "@material-tailwind/react";
 export default function FavButton({token, data, setReloader}) {
 
   const handleFavorite = () => { 
-    const URL = "https://questionbox-mgxz.onrender.com/answers/favorite"
+    let URL
+    if (data.answers) {
+      URL = "https://questionbox-mgxz.onrender.com/questions/favorite"
+    } else {
+      URL = "https://questionbox-mgxz.onrender.com/answers/favorite" 
+    }
     axios.patch(URL,
       { "answer_pk": data.pk }, 
       {headers: {
