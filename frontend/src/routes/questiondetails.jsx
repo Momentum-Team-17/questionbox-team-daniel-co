@@ -29,10 +29,10 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
   useEffect( () => {
     const URL = 'https://questionbox-mgxz.onrender.com'
     let authT = null
-    if (props.token) {
+    if (token) {
       authT = {headers: {
         'Content-Type': 'application/json',
-        Authorization: `Token ${props.token}`
+        Authorization: `Token ${token}`
       }}
     }
 

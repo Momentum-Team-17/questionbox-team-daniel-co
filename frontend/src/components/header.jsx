@@ -38,7 +38,6 @@ export default function Header(props) {
       "username": props.username,
       "password": password,
     }).then((res) => {
-      console.log("success",res.data);
       props.setToken(res.data.auth_token)
       setSuccess(false)
       props.setIsLoginOpen(false)
@@ -59,7 +58,6 @@ export default function Header(props) {
       "password": password,
       "email": email,
     }).then((res) => {
-      console.log("success",res.data.auth_token);
       props.setIsSignupOpen(false)
       props.setIsLoginOpen(true)
       setSuccess(true)
@@ -74,7 +72,6 @@ export default function Header(props) {
     setError(null)
     setSuccess(null)
     e.preventDefault()
-    console.log(props.token);
  
 
     axios.post(`${URL}/auth/token/logout/`, {},

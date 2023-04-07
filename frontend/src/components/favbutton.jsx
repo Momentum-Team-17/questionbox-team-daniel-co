@@ -26,7 +26,6 @@ export default function FavButton({token, data, setReloader}) {
         Authorization: `Token ${token}`
       }
       }).then((res) => {
-        console.log(res);
         setReloader(Math.random())
       }).catch(function (error) {
         if (error.response) {
