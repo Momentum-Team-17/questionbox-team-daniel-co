@@ -72,12 +72,17 @@ export default function HomePage(props) {
   }
 
   const handleSearch = () => {
-    axios.get(`${URL}/search?q=${search}`,
-    {
-      headers: {
+    let authT = null
+    if (props.token) {
+      authT = {headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${props.token}`
-      }
+      }}
+    }
+
+    axios.get(`${URL}/search?q=${search}`,
+    {
+      authT
     }).then((res) => {
       setData(res.data)
     })
