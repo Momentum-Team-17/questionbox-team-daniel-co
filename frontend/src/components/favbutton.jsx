@@ -26,7 +26,6 @@ export default function FavButton({token, data, setReloader}) {
         Authorization: `Token ${token}`
       }
       }).then((res) => {
-        console.log(res);
         setReloader(Math.random())
       }).catch(function (error) {
         if (error.response) {
@@ -39,7 +38,7 @@ export default function FavButton({token, data, setReloader}) {
       <button
         onClick={handleFavorite}
         type="button"
-        className="inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        className="mr-1 inline-flex items-center rounded-md border bg-indigo-600 p-1 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
         {/* Make red if favorited */}
           <FontAwesomeIcon icon={faHeart} className={ data.is_favorite ? "text-red-600" : ""} aria-hidden="true" />

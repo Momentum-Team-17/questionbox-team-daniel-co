@@ -90,8 +90,8 @@ function UserTab({ data, userIsUser }) {
             {data[panel].map((qOrA) => (
               panel.includes('question') ? 
                 <>
-                  <h3><Link to={`/question/${qOrA.pk}`} className="text-lg font-bold text-violet-800  hover:underline">{qOrA.title}</Link></h3>
-                  <Question data={qOrA} key={qOrA['time_created']} />
+                  <h3><Link key={qOrA['time_created']} to={`/question/${qOrA.pk}`} className="text-lg font-bold text-violet-800  hover:underline">{qOrA.title}</Link></h3>
+                  <Question data={qOrA} key={qOrA.pk} />
                 </> :
                 <Answer data={ qOrA} key = {qOrA['time_created']} />
             ))}

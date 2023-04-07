@@ -159,7 +159,7 @@ function Question({ data, token, setReloader }) {
     <div>
       <h3 className="mt-1">
         {token && <FavButton token={token} data={data} setReloader={setReloader} />}
-        <Link to={`/question/${data.pk}`} className="ml-1 text-lg font-bold text-violet-800  hover:underline">{data.title}</Link></h3>
+        <Link to={`/question/${data.pk}`} className="text-lg font-bold text-violet-800  hover:underline">{data.title}</Link></h3>
       <p className="text-sm"><Link to={`/user/${data.author}`} className="my-1 font-medium text-violet-600  hover:underline">{data.author}</Link> - { moment(data.time_created,).fromNow()} - {pluralize(data.answers.length, "answer")}</p>
       <p className="text-md my-1">{ data.text }</p>
       <p className="text-sm mb-3"><Link to={`/questions/${data.pk}`} className="mt-1 mb-1 font-medium text-violet-600 hover:underline"></Link></p>
