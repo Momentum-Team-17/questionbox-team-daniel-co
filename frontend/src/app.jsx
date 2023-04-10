@@ -22,13 +22,6 @@ export default function App() {
   const [reloader, setReloader] = useState(1)
 
 
-  
-
-  const setAuth = (token, username) => {
-    setToken(token);
-    setUsername(username);
-  }
-
   return (
     <><Routes>
       <Route element={<Header token={token} username={username} setReloader={setReloader} setUsername={ setUsername } setToken={ setToken } errorElement={Page404}
