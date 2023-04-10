@@ -1,7 +1,7 @@
 import { Tab } from "@headlessui/react"
 import axios from "axios"
 import { useEffect, useState, useRef } from "react"
-import { useParams } from "react-router-dom"
+import { useLocation, useParams } from "react-router-dom"
 import Loader from "../components/loader"
 import Question from '../components/question'
 import Answer from "../components/answer"
@@ -11,26 +11,28 @@ import { Link } from "react-router-dom"
 export default function UserPage(props) {
   const [data, setData] = useState()
   const { user } = useParams()
-  const [openTab, setOpenTab] = useState("questions")
   const userIsUser = useRef()
+  const location = useLocation();
+  
   useEffect(() => {
+    setData(null)
     const URL = 'https://questionbox-mgxz.onrender.com'
-    let authT = null
-    if (props.token) {
-      authT = {headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${props.token}`
-      }}
-    }
 
     axios.get(`${URL}/profile/${user}`,
     {
-      authT
+      headers: props.token && {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${props.token}`
+      }
       }).then((res) => {
       userIsUser.current = user === props.username
       setData(res.data)
     })
-  },[])
+  }, [location])
+  
+    useEffect(() => {
+    console.log("location changed");
+  }, [location])
 
   if (data) return (
     <div className="">
@@ -54,7 +56,8 @@ function UserTab({ data, userIsUser }) {
   let tabs = {
     "Questions": "user_questions",
     "Answers":"user_answers"}
-  if (userIsUser) {
+    
+  if (userIsUser.current) {
     tabs["Favorite Questions"] = "fav_questions"
     tabs["Favorite Answers"] = "fav_answers"
 

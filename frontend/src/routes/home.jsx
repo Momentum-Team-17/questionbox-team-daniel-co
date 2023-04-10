@@ -24,19 +24,15 @@ export default function HomePage(props) {
 
 
   useEffect(() => {
-    let authT = null
-    if (props.token) {
-      authT = {headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${props.token}`
-      }}
-    }
 
     axios.get(`${URL}/questions/${filter}`,
     {
-      authT
-      }).then((res) => {
-      setData(res.data)
+      headers: props.token && {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${props.token}`
+      }}).then((res) => {
+        setData(res.data)
+        console.log(res.data);
     })
 
   }, [filter])
