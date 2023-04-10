@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import axios from "axios"
 import moment from "moment"
 import { useState, useEffect, useRef } from "react"
-import { Link, useNavigate, useParams } from "react-router-dom"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import Loader from '../components/loader'
 import { Tooltip } from "@material-tailwind/react";
 import Question from '../components/question'
@@ -23,28 +23,26 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
   const [answerText, setAnswerText] = useState()
   const userIsAuthor = useRef()
   const { pk } = useParams()
+  const location = useLocation();
 
   
 
-  useEffect( () => {
+  useEffect(() => {
     const URL = 'https://questionbox-mgxz.onrender.com'
-    let authT = null
-    if (token) {
-      authT = {headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${token}`
-      }}
-    }
 
     axios.get(`${URL}/questions/${pk}`,
     {
-      authT
+      headers: token && {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}`
+      }
       }).then((res) => {
+      console.log(res.request)
       userIsAuthor.current = username === res.data.author
       setData(res.data)
     })
 
-  }, [])
+  }, [location])
   
   const handleNewAnswer = (e) => {
     const URL = 'https://questionbox-mgxz.onrender.com'
