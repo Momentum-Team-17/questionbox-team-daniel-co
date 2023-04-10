@@ -47,25 +47,29 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
   }, [])
   
   const handleNewAnswer = (e) => {
-    const URL = 'https://questionbox-mgxz.onrender.com'
     e.preventDefault() 
+    
+    if (token) { 
+      const URL = 'https://questionbox-mgxz.onrender.com'
+      axios.post(`${URL}/questions/${data.pk}/answers`,
+        {
+          "text": answerText,
+        },
+        { headers : {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${ token }`
+        } })
+        .then((res) => {
+          setReloader(Math.random())
+        }).catch(function (error) {
+          if (error.response) {
+            console.log(error.response.data);
+          }
+        })
+    } else {
+      setIsLoginOpen(true)
+    }
 
-
-    axios.post(`${URL}/questions/${data.pk}/answers`,
-      {
-        "text": answerText,
-      },
-      { headers : {
-        'Content-Type': 'application/json',
-        Authorization: `Token ${ token }`
-      } })
-      .then((res) => {
-        setReloader(Math.random())
-      }).catch(function (error) {
-        if (error.response) {
-          console.log(error.response.data);
-        }
-      })
   }
   
   if (data) {
@@ -80,7 +84,7 @@ export default function QuestionPage({ token, setIsLoginOpen, setReloader, usern
 
           {data.accepted_answer && <AcceptedAnswer  data={data.accepted_answer}  token={token}  setReloader={setReloader} />}
           {/* component this out */}
-          <form className="mb-2" onSubmit={(e) => { token ? handleNewAnswer(e) : setIsLoginOpen(true)}}>
+          <form className="mb-2" onSubmit={(e) => handleNewAnswer(e)}>
             <div className="flex justify-between items-center my-2">
               <h3 className="text-xl font-bold mt-3">Post Answer</h3>
               <button type="submit" disabled={ answerText ? false : true} className={`${answerText ? "bg-indigo-600 hover:bg-indigo-500" : "bg-gray-400"} inline-flex items-center rounded-md border  px-3 py-2 text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600`}>
