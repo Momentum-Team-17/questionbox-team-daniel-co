@@ -1,7 +1,6 @@
 
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import { faInbox } from '@fortawesome/free-solid-svg-icons'
-import '../styles/header.css'
 import { Dialog, Transition, Popover } from '@headlessui/react'
 import { Fragment, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
