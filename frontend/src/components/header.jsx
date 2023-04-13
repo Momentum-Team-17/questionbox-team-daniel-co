@@ -9,6 +9,7 @@ import useLocalStorageState from 'use-local-storage-state'
 import axios from 'axios'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { usePopper } from 'react-popper'
+import Loader from '../components/loader'
 
 export class Input {
   constructor(label, type, value, onChange, icon) {
@@ -192,7 +193,7 @@ export function Modal({fields, isOpen, setIsOpen, error, success, isLoading}) {
                   >
                     {fields.title}
                   </Dialog.Title>
-
+                  {isLoading ? <Loader /> : <>
                   {success && <h2 className="font-bold">User successfully created! Please login.</h2> }
                   <form onSubmit={ (e) => fields.onSubmit(e) }>
                     <div className="mt-2">
@@ -217,7 +218,7 @@ export function Modal({fields, isOpen, setIsOpen, error, success, isLoading}) {
                         {fields.title}
                       </button>
                     </div>
-                  </form>
+                  </form></>}
                 </Dialog.Panel>
               </Transition.Child>
             </div>
