@@ -27,21 +27,26 @@ export default function Header(props) {
   // const [confirmPassword, setConfirmPassword] = useState()
   const [error, setError] = useState()
   const [success, setSuccess] = useState()
+  const [isLoading, setIsLoading] = useState(false)
   const URL = "https://questionbox-mgxz.onrender.com"
   
   const handleLogin = (e) => {
     setError(null)
     setSuccess(null)
+    setIsLoading(true)
     e.preventDefault()
     axios.post(`${URL}/auth/token/login/`, {
       "username": props.username,
       "password": password,
     }).then((res) => {
+      setIsLoading(false)
       props.setToken(res.data.auth_token)
       setSuccess(false)
       props.setIsLoginOpen(false)
     }).catch(function (error) {
       if (error.response) {
+        setIsLoading(false)
+
         setError(error.response.data);
         setSuccess(false)
       }
@@ -52,16 +57,20 @@ export default function Header(props) {
     e.preventDefault()
     setError(null)
     setSuccess(null)
+    setIsLoading(true)
+
     axios.post(`${URL}/auth/users/`, {
       "username": props.username,
       "password": password,
       "email": email,
     }).then((res) => {
+      setIsLoading(false)
       props.setIsSignupOpen(false)
       props.setIsLoginOpen(true)
       setSuccess(true)
     }).catch(function (error) {
       if (error.response) {
+        setIsLoading(false)
         setError(error.response.data);
       }
     })
@@ -148,7 +157,7 @@ export default function Header(props) {
   )
 }
 
-export function Modal({fields, isOpen, setIsOpen, error, success}) {
+export function Modal({fields, isOpen, setIsOpen, error, success, isLoading}) {
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -183,6 +192,7 @@ export function Modal({fields, isOpen, setIsOpen, error, success}) {
                   >
                     {fields.title}
                   </Dialog.Title>
+
                   {success && <h2 className="font-bold">User successfully created! Please login.</h2> }
                   <form onSubmit={ (e) => fields.onSubmit(e) }>
                     <div className="mt-2">
